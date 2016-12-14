@@ -2,7 +2,6 @@
 
 var crypto = require('crypto');
 
-
 module.exports = function (context) {
     var path = context.requireCordovaModule('path');
     var fs = context.requireCordovaModule('fs');
@@ -44,7 +43,8 @@ module.exports = function (context) {
         var content;
 
         var hashes = getPlatformAssets(platformWww).map(function (file) {
-            var fileName = file.replace(platformWww + '/', '');
+            var fileName = file.replace(/\\/g, '/');
+            fileName = fileName.replace(platformWww.replace(/\\/g, '/') + '/', '');
             var hash;
             var hashHex;
             hash = crypto.createHash('sha256');
@@ -118,7 +118,7 @@ module.exports = function (context) {
     });
 
     function exit (msg, exception) {
-        process.stdout.write('\nERROR! ' + msg + '\n');
+        process.stdout.write('\n[ANTI-TAMPERING] ERROR! ' + msg + '\n');
         throw new Error(exception);
     }
 };

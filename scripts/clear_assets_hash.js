@@ -60,7 +60,7 @@ module.exports = function (context) {
     });
 
     function exit (msg, exception) {
-        process.stdout.write('\nERROR! ' + msg + '\n');
+        process.stdout.write('\n[ANTI-TAMPERING] ERROR! ' + msg + '\n');
         throw new Error(exception);
     }
 };

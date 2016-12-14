@@ -1,7 +1,8 @@
 {
   "name": "cordova-plugin-antitampering",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Verify the integrity of cordova static assets - Android / iOS",
+  "author": "duddu",
   "repository": {
     "type": "git",
     "url": "https://github.com/duddu/cordova-plugin-antitampering"
@@ -13,5 +14,14 @@
       "ios"
     ]
   },
+  "keywords": [
+    "ecosystem:cordova",
+    "cordova-android",
+    "cordova-ios",
+    "cordova",
+    "anti-tampering",
+    "tampering",
+    "security"
+  ],
   "license": "MIT"
 }

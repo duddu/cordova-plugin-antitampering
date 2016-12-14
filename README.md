@@ -5,13 +5,13 @@ Verify the integrity of cordova static assets, comparing them at run-time with a
 
 ## Installation
 
-Install the latest version from npm:
+Install latest version from npm:
 
     phonegap plugin add cordova-plugin-antitampering
 
-Install the latest commit from branch master:
+Install latest commit from branch develop:
 
-    cordova plugin add https://github.com/duddu/cordova-plugin-antitampering.git
+    cordova plugin add https://github.com/duddu/cordova-plugin-antitampering#develop
 
 ## Usage
 

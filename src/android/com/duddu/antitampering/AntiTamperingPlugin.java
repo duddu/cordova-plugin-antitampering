@@ -1,7 +1,6 @@
 package com.duddu.antitampering;
 
 import android.content.res.AssetManager;
-import android.util.Log;
 import android.util.Base64;
 import android.util.ArrayMap;
 
@@ -39,22 +38,17 @@ public class AntiTamperingPlugin extends CordovaPlugin {
                 @Override
                 public void run () {
                     PluginResult result;
-                    String dir = "www";
-                    long startTime = System.nanoTime();
                     try {
                         for (Entry<String, String> entry : AssetsHashes.entrySet())
                         {
                             byte[] fileNameDecode = Base64.decode(entry.getKey(), 0);
                             String fileName = new String(fileNameDecode, StandardCharsets.UTF_8);
-                            Log.d("antitampering", fileName + " -> " + entry.getValue());
+                            // Log.d("antitampering", fileName + " -> " + entry.getValue());
                             if (entry.getValue() == null ||
                                 !entry.getValue().equals(createHash("www/" + fileName))) {
                                 throw new Exception("Hash for " + fileName + " doesn't match");
                             }
                         }
-                        long endTime = System.nanoTime();
-                        long time = (endTime - startTime) / 1000000;
-                        Log.d("antitampering", Long.toString(time));
                         result = new PluginResult(PluginResult.Status.OK, true);
                     } catch (Exception e) {
                         result = new PluginResult(PluginResult.Status.ERROR, e.toString());
@@ -88,7 +82,7 @@ public class AntiTamperingPlugin extends CordovaPlugin {
             hexString.append(Integer.toHexString(0xFF & hashBytes[i]));
         }
         String hash = new String(hexString);
-        Log.d("antitampering" + fileName, hash);
+        // Log.d("antitampering" + fileName, hash);
         return hash;
     }
 

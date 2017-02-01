@@ -29,6 +29,7 @@
         </config-file>
 
         <source-file src="src/android/com/duddu/antitampering/AntiTamperingPlugin.java" target-dir="src/com/duddu/antitampering" />
+        <source-file src="src/android/com/duddu/antitampering/AssetsIntegrity.java" target-dir="src/com/duddu/antitampering" />
 
     </platform>
 

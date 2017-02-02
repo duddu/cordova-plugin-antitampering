@@ -4,6 +4,7 @@ import org.apache.cordova.CallbackContext;
 import org.apache.cordova.CordovaPlugin;
 import org.apache.cordova.PluginResult;
 import org.json.JSONArray;
+import org.json.JSONObject;
 import org.json.JSONException;
 
 
@@ -17,8 +18,9 @@ public class AntiTamperingPlugin extends CordovaPlugin {
                 public void run () {
                     PluginResult result;
                     try {
-                        AssetsIntegrity.check(cordova.getActivity().getAssets());
-                        result = new PluginResult(PluginResult.Status.OK, true);
+                        JSONObject response = new JSONObject();
+                        response.put("assets", AssetsIntegrity.check(cordova.getActivity().getAssets()));
+                        result = new PluginResult(PluginResult.Status.OK, response);
                     } catch (Exception e) {
                         result = new PluginResult(PluginResult.Status.ERROR, e.toString());
                     }

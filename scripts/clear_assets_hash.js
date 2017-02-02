@@ -19,14 +19,16 @@ module.exports = function (context) {
 
         if (platform === 'android') {
             pluginDir = path.join(platformPath, 'src');
-            sourceFile = path.join(pluginDir, 'com/duddu/antitampering/AntiTamperingPlugin.java');
+            sourceFile = path.join(pluginDir, 'com/duddu/antitampering/AssetsIntegrity.java');
             try {
                 content = fs.readFileSync(sourceFile, 'utf-8');
             } catch (e) {
                 exit('Unable to read java class source at path ' + sourceFile, e);
             }
 
-            content = content.replace(/\s*AssetsHashes\.put\(.+/g, '');
+            content = content.replace(/assetsHashes\s*=.+\s*new.*(\(.+\)(\s|.)*\}\})/, function (match, group) {
+                return match.replace(group, '()');
+            });
 
             try {
                 fs.writeFileSync(sourceFile, content, 'utf-8');

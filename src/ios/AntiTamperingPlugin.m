@@ -33,7 +33,12 @@
                 }
                 
             }];
-            result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsInt:[[assetsHashes allKeys] count]];
+            NSDictionary* response = @{
+                @"assets": @{
+                    @"count": [NSNumber numberWithInt:[[assetsHashes allKeys] count]]
+                }
+            };
+            result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:response];
         } @catch (NSException* exception) {
             result = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:[@"AntiTampering failed: " stringByAppendingString:exception.reason]];
         } @finally {

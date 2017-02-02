@@ -65,20 +65,22 @@ module.exports = function (context) {
 
         if (platform === 'android') {
             pluginDir = path.join(platformPath, 'src');
-            sourceFile = path.join(pluginDir, 'com/duddu/antitampering/AntiTamperingPlugin.java');
+            sourceFile = path.join(pluginDir, 'com/duddu/antitampering/AssetsIntegrity.java');
             try {
                 content = fs.readFileSync(sourceFile, 'utf-8');
             } catch (e) {
                 exit('Unable to read java class source at path ' + sourceFile, e);
             }
 
-            content = content.replace(/\s*AssetsHashes\.put\(.+/g, '')
-            .replace(/(initialize\(CordovaInterface\scordova[^\}]*)\}/, function (match) {
-                var replace = match.slice(0, -1);
+            content = content.replace(/assetsHashes\s*=.+\s*new.*(\(\d+\)(\s|.)*\}\})/, function (match, group) {
+                return match.replace(group, '()');
+            }).replace(/assetsHashes\s*=.+\s*new.*(\(.*\))/, function (match, group) {
+                var replace = match.replace(group, '(' + (hashes.length || '') + ')');
+                replace += ' {{\n' + tab();
                 hashes.forEach(function (h) {
-                    replace += '    AssetsHashes.put("'+ h.file +'", "'+ h.hash +'");\n    ';
+                    replace += tab(2) + 'put("'+ h.file +'", "'+ h.hash +'");\n' + tab();
                 });
-                replace += '}';
+                replace += tab() + '}}';
                 return replace;
             });
 
@@ -97,13 +99,13 @@ module.exports = function (context) {
             try {
                 content = fs.readFileSync(sourceFile, 'utf-8');
             } catch (e) {
-                exit('Unable to read obj c source at path ' + sourceFile, e);
+                exit('Unable to read obj-c source at path ' + sourceFile, e);
             }
 
             content = content.replace(/assetsHashes = (@{([^}]*)});/, function (a, b) {
-                var list = '@{\n    ';
+                var list = '@{\n' + tab();
                 hashes.forEach(function (h) {
-                    list += '    @"' + h.file + '": @"' + h.hash + '",\n    ';
+                    list += tab() + '@"' + h.file + '": @"' + h.hash + '",\n' + tab();
                 });
                 list += '}';
                 return a.replace(b, list);
@@ -116,6 +118,14 @@ module.exports = function (context) {
             }
         }
     });
+
+    function tab (size) {
+        var str = '';
+        for (var i = 0; i < (size || 1); i++) {
+            str += '    ';
+        }
+        return str;
+    }
 
     function exit (msg, exception) {
         process.stdout.write('\n[ANTI-TAMPERING] ERROR! ' + msg + '\n');

@@ -35,7 +35,7 @@
             }];
             NSDictionary* response = @{
                 @"assets": @{
-                    @"count": [NSNumber numberWithInt:[[assetsHashes allKeys] count]]
+                    @"count": [NSNumber numberWithUnsignedInteger:[[assetsHashes allKeys] count]]
                 }
             };
             result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:response];

@@ -3,6 +3,8 @@
 
 @interface AntiTamperingPlugin : CDVPlugin
 
+@property (nonatomic, strong) NSDictionary* assetsHashes;
+
 -(void)verify:(CDVInvokedUrlCommand*)command;
 
 @end

@@ -2,7 +2,7 @@
 <plugin xmlns="http://apache.org/cordova/ns/plugins/1.0"
     xmlns:android="http://schemas.android.com/apk/res/android"
     id="cordova-plugin-antitampering"
-    version="0.0.3">
+    version="0.1.0">
     <name>Anti-Tampering</name>
     <description>Verify the integrity of cordova static assets - Android / iOS</description>
     <author>Davide Doronzo</author>
@@ -17,6 +17,10 @@
         <clobbers target="cordova.plugins.AntiTampering" />
     </js-module>
 
+    <preference name="ENABLE_CORDOVA_CALLBACK" default="false" />
+
+    <hook type="after_plugin_install" src="scripts/enable_cordova_callback.js" />
+    <hook type="after_prepare" src="scripts/enable_cordova_callback.js" />
     <hook type="after_prepare" src="scripts/clear_assets_hash.js" />
     <hook type="before_compile" src="scripts/save_assets_hash.js" />
 
@@ -30,6 +34,7 @@
 
         <source-file src="src/android/com/duddu/antitampering/AntiTamperingPlugin.java" target-dir="src/com/duddu/antitampering" />
         <source-file src="src/android/com/duddu/antitampering/AssetsIntegrity.java" target-dir="src/com/duddu/antitampering" />
+        <source-file src="src/android/com/duddu/antitampering/TamperingException.java" target-dir="src/com/duddu/antitampering" />
 
     </platform>
 

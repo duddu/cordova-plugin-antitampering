@@ -29,6 +29,7 @@
         <config-file target="res/xml/config.xml" parent="/*">
             <feature name="AntiTamperingPlugin">
                 <param name="android-package" value="com.duddu.antitampering.AntiTamperingPlugin"/>
+                <param name="onload" value="true" />
             </feature>
         </config-file>
 
@@ -43,6 +44,7 @@
         <config-file target="config.xml" parent="/*">
             <feature name="AntiTamperingPlugin">
                 <param name="ios-package" value="AntiTamperingPlugin"/>
+                <param name="onload" value="true" />
             </feature>
         </config-file>
 

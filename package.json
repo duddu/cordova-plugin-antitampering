@@ -23,5 +23,11 @@
     "tampering",
     "security"
   ],
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "eslint": "3.15.0"
+  },
+  "scripts": {
+    "test": "eslint \"**/*.js\""
+  }
 }

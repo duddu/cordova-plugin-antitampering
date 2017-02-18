@@ -1,6 +1,6 @@
 {
   "name": "cordova-plugin-antitampering",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Verify the integrity of cordova static assets - Android / iOS",
   "author": "duddu",
   "repository": {

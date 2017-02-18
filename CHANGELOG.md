@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.1.1
+
+- Added "onload" feature param to force the plugin instantiation
+- Added travis ci integration for eslint test
+- Updated README
+
 ## v0.1.0
 
 - **BREAKING CHANGE**: If tampering is detected, now the app will stop the execution by default

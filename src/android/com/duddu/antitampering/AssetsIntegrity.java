@@ -21,6 +21,10 @@ class AssetsIntegrity {
     private static final String MESSAGE_DIGEST_ALGORITHM = "SHA-256";
     private static final String ASSETS_BASE_PATH = "www/";
 
+    private static final Map<String, String> assetsHashes = Collections.unmodifiableMap(
+        new HashMap<String, String>()
+    );
+
     public static JSONObject check(AssetManager assets) throws Exception {
         for (Map.Entry<String, String> entry : assetsHashes.entrySet()) {
             byte[] fileNameDecode = Base64.decode(entry.getKey(), 0);
@@ -58,9 +62,5 @@ class AssetsIntegrity {
         // Log.d("AntiTampering", String(hexString));
         return new String(hexString);
     }
-
-    private static final Map<String, String> assetsHashes = Collections.unmodifiableMap(
-        new HashMap<String, String>()
-    );
 
 }

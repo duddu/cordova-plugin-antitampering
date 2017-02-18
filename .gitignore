@@ -20,4 +20,4 @@
 jsconfig.json
 nbproject
 Thumbs.db
-/test
+node_modules

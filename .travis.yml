@@ -12,6 +12,7 @@ addons:
   sauce_connect: true
 
 before_install:
+  - export PLUGIN_ROOT=$(pwd)
   - export LANG=en_US.UTF-8
   - brew update
 
@@ -32,7 +33,7 @@ script:
   - echo y | ./android-sdk-macosx/tools/android update sdk --no-ui --all --filter extra-android-m2repository
   - echo y | ./android-sdk-macosx/tools/android update sdk --no-ui --all --filter extra-google-m2repository
 
-  - export ANDROID_HOME=/Users/travis/build/duddu/cordova-plugin-antitampering/android-sdk-macosx
+  - export ANDROID_HOME=$PLUGIN_ROOT/android-sdk-macosx
   - export PATH=${PATH}:$ANDROID_HOME/tools:$ANDROID_HOME/platform-tools:$ANDROID_HOME/build-tools/23.0.2
 
   - npm install -g cordova
@@ -44,7 +45,10 @@ script:
   - cordova plugin list
   - cordova build android
 
+  - npm run android-tamper
+  - jarsigner -verbose -keystore ~/.android/debug.keystore -storepass android -keypass android $PLUGIN_ROOT/tests/android-tampered.apk androiddebugkey
+
   - export COMMIT_HASH=$(git rev-parse --short=16 HEAD)
-  - curl -u $SAUCE_USERNAME:$SAUCE_ACCESS_KEY -X POST -H "Content-Type:application/octet-stream" https://saucelabs.com/rest/v1/storage/duddu/$COMMIT_HASH.apk?overwrite=true --data-binary @/Users/travis/build/duddu/cordova-plugin-antitampering/tests/hello/platforms/android/build/outputs/apk/android-debug.apk
-  
+  - curl -u $SAUCE_USERNAME:$SAUCE_ACCESS_KEY -X POST -H "Content-Type:application/octet-stream" https://saucelabs.com/rest/v1/storage/duddu/$COMMIT_HASH.apk?overwrite=true --data-binary @$PLUGIN_ROOT/tests/android-tampered.apk
+
   - npm run android-test

@@ -36,6 +36,8 @@
   "scripts": {
     "lint": "eslint \"**/*.js\"",
     "android-tamper": "node tests/tamper-apk.js",
-    "android-test": "mocha tests/appium-android-5.0.js"
+    "android-test": "mocha tests/appium-android-5.0.js",
+    "ios-tamper": "node tests/tamper-app.js",
+    "ios-test": "mocha tests/appium-ios-9.3.js"
   }
 }

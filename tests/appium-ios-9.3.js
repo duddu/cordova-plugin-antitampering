@@ -1,6 +1,6 @@
 'use strict';
 
-/* eslint no-console: 0, no-process-env: 0 */
+/* eslint no-console: 0, no-process-env: 0, no-underscore-dangle: 0 */
 
 var wd = require('wd');
 var chai = require('chai');
@@ -29,15 +29,16 @@ var getWebViewContext = function (driver) {
     });
 };
 
-var antiTamperingTest = function (callback) {
-    return cordova.plugins.AntiTampering.verify(function (success) {
-        callback('success -> ' + JSON.stringify(success));
+var antiTamperingTest = function () {
+    window.__tamperingTestResult = void 0;
+    cordova.plugins.AntiTampering.verify(function (success) {
+        window.__tamperingTestResult = JSON.stringify(success);
     }, function (error) {
-        callback('error -> ' + JSON.stringify(error));
+        window.__tamperingTestResult = JSON.stringify(error);
     });
 };
 
-describe('AntiTampering Plugin Test - Android', function () {
+describe('AntiTampering Plugin Test - iOS', function () {
     this.timeout(1000000);
     var driver;
     var allPassed = true;
@@ -56,12 +57,12 @@ describe('AntiTampering Plugin Test - Android', function () {
             .init({
                 browserName: '',
                 appiumVersion: '1.5.3',
-                deviceName: 'Android Emulator',
+                deviceName: 'iPhone Simulator',
                 deviceOrientation: 'portrait',
-                platformVersion: '5.0',
-                platformName: 'Android',
-                app: 'sauce-storage:' + process.env.COMMIT_HASH + '-android.apk',
-                name: 'AntiTampering - Android 5.0',
+                platformVersion: '9.3',
+                platformName: 'iOS',
+                app: 'sauce-storage:' + process.env.COMMIT_HASH + '-ios.zip',
+                name: 'AntiTampering - iOS 9.3',
                 tags: ['cordova-plugin-antitampering'],
                 tunnelIdentifier: process.env.TRAVIS_JOB_NUMBER
             })
@@ -97,8 +98,8 @@ describe('AntiTampering Plugin Test - Android', function () {
 
     it('The plugin should be able to detect tampering on index.html', function () {
         return driver
-            .setAsyncScriptTimeout(20000)
-            .executeAsync(antiTamperingTest, [])
-                .should.eventually.contain('index.html has been tampered');
+            .execute(antiTamperingTest, [])
+            .waitFor(wd.asserters.jsCondition('__tamperingTestResult'), 20000, 1000)
+                .should.eventually.contain('count');
     });
 });

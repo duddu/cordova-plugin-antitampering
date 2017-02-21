@@ -39,7 +39,7 @@ new JSZip.external.Promise(function (resolve, reject) {
         return result + '<h3 id="tampering">I\'ve been tampered with!</h3>';
     });
     apk.file(indexAsset, tamperedContent).remove('META-INF');
-    console.log('The original android build successfully tampered with.');
+    console.log('The original android build was successfully tampered with.');
     apk.generateNodeStream({ type: 'nodebuffer', streamFiles: true })
         .pipe(fs.createWriteStream(tamperedApkPath))
         .on('finish', function () {

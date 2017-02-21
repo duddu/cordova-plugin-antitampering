@@ -3,8 +3,6 @@ sudo: false
 language: objective-c
 os: osx
 osx_image: xcode7.3
-node_js:
-  - "6.9.5"
 
 cache: false
 
@@ -17,7 +15,9 @@ before_install:
   - brew update
 
 install:
-  - npm install
+  - npm i -g ios-deploy --unsafe-perm=true
+  - npm i -g cordova
+  - npm i
 
 before_script:
   - npm run lint
@@ -36,19 +36,26 @@ script:
   - export ANDROID_HOME=$PLUGIN_ROOT/android-sdk-macosx
   - export PATH=${PATH}:$ANDROID_HOME/tools:$ANDROID_HOME/platform-tools:$ANDROID_HOME/build-tools/23.0.2
 
-  - npm install -g cordova
   - cd tests
   - cordova create hello com.example.hello HelloWorld
   - cd hello
   - cordova platform add android@5.2.2 --save
+  - cordova platform add ios@4.2.1 --save
+  - cordova requirements
   - cordova plugin add ../../ --variable ENABLE_CORDOVA_CALLBACK=true --save
   - cordova plugin list
+
   - cordova build android
-
   - npm run android-tamper
-  - jarsigner -verbose -keystore ~/.android/debug.keystore -storepass android -keypass android $PLUGIN_ROOT/tests/android-tampered.apk androiddebugkey
-
+  - jarsigner -verbose -keystore $HOME/.android/debug.keystore -storepass android -keypass android $PLUGIN_ROOT/tests/android-tampered.apk androiddebugkey
   - export COMMIT_HASH=$(git rev-parse --short=16 HEAD)
-  - curl -u $SAUCE_USERNAME:$SAUCE_ACCESS_KEY -X POST -H "Content-Type:application/octet-stream" https://saucelabs.com/rest/v1/storage/duddu/$COMMIT_HASH.apk?overwrite=true --data-binary @$PLUGIN_ROOT/tests/android-tampered.apk
-
+  - curl -u $SAUCE_USERNAME:$SAUCE_ACCESS_KEY -X POST -H "Content-Type:application/octet-stream" https://saucelabs.com/rest/v1/storage/duddu/$COMMIT_HASH-android.apk?overwrite=true --data-binary @$PLUGIN_ROOT/tests/android-tampered.apk
   - npm run android-test
+
+  - cordova build ios
+  - npm run ios-tamper
+  - cd platforms/ios/build/emulator
+  - zip -r $PLUGIN_ROOT/tests/ios-tampered.zip HelloWorld.app
+  - curl -u $SAUCE_USERNAME:$SAUCE_ACCESS_KEY -X POST -H "Content-Type:application/octet-stream" https://saucelabs.com/rest/v1/storage/duddu/$COMMIT_HASH-ios.zip?overwrite=true --data-binary @$PLUGIN_ROOT/tests/ios-tampered.zip
+  - cd $PLUGIN_ROOT
+  - npm run ios-test

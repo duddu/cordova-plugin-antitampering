@@ -10,11 +10,13 @@ addons:
 
 before_cache:
   - rm -f $HOME/.gradle/caches/modules-2/modules-2.lock
-  - rm -f $HOME/.gradle/caches/*/classAnalysis/cache.properties.lock
+  - rm -f $HOME/.gradle/caches/*/jarSnapshots/jarSnapshots.bin
   - rm -f $HOME/.gradle/caches/*/jarSnapshots/cache.properties.lock
+  - rm -f $HOME/.gradle/caches/*/classAnalysis/cache.properties.lock
   - rm -rf $HOME/.gradle/caches/*/plugin-resolution/
 
-cache: 
+cache:
+  timeout: 900
   directories:
     - $HOME/.m2
     - $HOME/.gradle/caches/
@@ -23,7 +25,11 @@ cache:
     - node_modules
 
 before_install:
-  - brew update
+  - wget http://dl.google.com/android/android-sdk_r24.4-macosx.zip
+  - tar -xf android-sdk_r24.4-macosx.zip
+  - echo y | ./android-sdk-macosx/tools/android update sdk -u -a -t android-23,build-tools-23.0.2,platform-tools
+  - export ANDROID_HOME=$TRAVIS_BUILD_DIR/android-sdk-macosx
+  - export PATH=${PATH}:$ANDROID_HOME/tools:$ANDROID_HOME/platform-tools:$ANDROID_HOME/build-tools/23.0.2
 
 install:
   - npm i -g cordova
@@ -33,15 +39,8 @@ before_script:
   - npm run lint
 
 script:
-  - wget http://dl.google.com/android/android-sdk_r24.4-macosx.zip
-  - tar -xf android-sdk_r24.4-macosx.zip
-  - echo y | ./android-sdk-macosx/tools/android -s update sdk -u -a -t android-23,build-tools-23.0.2,platform-tools,extra-android-m2repository,extra-google-m2repository
-  - export ANDROID_HOME=$TRAVIS_BUILD_DIR/android-sdk-macosx
-  - export PATH=${PATH}:$ANDROID_HOME/tools:$ANDROID_HOME/platform-tools:$ANDROID_HOME/build-tools/23.0.2
-
-  - cd tests
-  - cordova create hello com.example.hello HelloWorld
-  - cd hello
+  - cordova create tests/hello com.example.hello HelloWorld
+  - cd tests/hello
   - cordova platform add android@5.2.2 --save
   - cordova platform add ios@4.2.1 --save
   - cordova plugin add ../../ --variable ENABLE_CORDOVA_CALLBACK=true --save

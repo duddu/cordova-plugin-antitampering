@@ -4,18 +4,27 @@ language: objective-c
 os: osx
 osx_image: xcode7.3
 
-cache: false
-
 addons:
   sauce_connect: true
 
+before_cache:
+  - rm -f $HOME/.gradle/caches/modules-2/modules-2.lock
+  - rm -f $HOME/.gradle/caches/*/classAnalysis/cache.properties.lock
+  - rm -f $HOME/.gradle/caches/*/jarSnapshots/cache.properties.lock
+  - rm -rf $HOME/.gradle/caches/*/plugin-resolution/
+
+cache: 
+  directories:
+    - $HOME/.m2
+    - $HOME/.gradle/caches/
+    - $HOME/.gradle/wrapper/
+    - $HOME/.android/build-cache
+    - node_modules
+
 before_install:
-  - export PLUGIN_ROOT=$(pwd)
-  - export LANG=en_US.UTF-8
   - brew update
 
 install:
-  - npm i -g ios-deploy --unsafe-perm=true
   - npm i -g cordova
   - npm i
 
@@ -24,16 +33,9 @@ before_script:
 
 script:
   - wget http://dl.google.com/android/android-sdk_r24.4-macosx.zip
-  - tar -xvf android-sdk_r24.4-macosx.zip
-
-  - echo y | ./android-sdk-macosx/tools/android update sdk --no-ui --all --filter platform-tools
-  - echo y | ./android-sdk-macosx/tools/android update sdk --no-ui --all --filter build-tools-23.0.2
-  - echo y | ./android-sdk-macosx/tools/android update sdk --no-ui --all --filter android-23
-  - echo y | ./android-sdk-macosx/tools/android update sdk --no-ui --all --filter extra-android-support
-  - echo y | ./android-sdk-macosx/tools/android update sdk --no-ui --all --filter extra-android-m2repository
-  - echo y | ./android-sdk-macosx/tools/android update sdk --no-ui --all --filter extra-google-m2repository
-
-  - export ANDROID_HOME=$PLUGIN_ROOT/android-sdk-macosx
+  - tar -xf android-sdk_r24.4-macosx.zip
+  - echo y | ./android-sdk-macosx/tools/android -s update sdk -u -a -t android-23,build-tools-23.0.2,platform-tools,extra-android-m2repository,extra-google-m2repository
+  - export ANDROID_HOME=$TRAVIS_BUILD_DIR/android-sdk-macosx
   - export PATH=${PATH}:$ANDROID_HOME/tools:$ANDROID_HOME/platform-tools:$ANDROID_HOME/build-tools/23.0.2
 
   - cd tests
@@ -41,21 +43,20 @@ script:
   - cd hello
   - cordova platform add android@5.2.2 --save
   - cordova platform add ios@4.2.1 --save
-  - cordova requirements
   - cordova plugin add ../../ --variable ENABLE_CORDOVA_CALLBACK=true --save
   - cordova plugin list
+  - cordova prepare
 
-  - cordova build android
+  - cordova compile --debug android -verbose
   - npm run android-tamper
-  - jarsigner -verbose -keystore $HOME/.android/debug.keystore -storepass android -keypass android $PLUGIN_ROOT/tests/android-tampered.apk androiddebugkey
-  - export COMMIT_HASH=$(git rev-parse --short=16 HEAD)
-  - curl -u $SAUCE_USERNAME:$SAUCE_ACCESS_KEY -X POST -H "Content-Type:application/octet-stream" https://saucelabs.com/rest/v1/storage/duddu/$COMMIT_HASH-android.apk?overwrite=true --data-binary @$PLUGIN_ROOT/tests/android-tampered.apk
+  - jarsigner -verbose -keystore $HOME/.android/debug.keystore -storepass android -keypass android $TRAVIS_BUILD_DIR/tests/android-tampered.apk androiddebugkey
+  - curl -u $SAUCE_USERNAME:$SAUCE_ACCESS_KEY -X POST -H "Content-Type:application/octet-stream" https://saucelabs.com/rest/v1/storage/duddu/$TRAVIS_JOB_ID-android.apk?overwrite=true --data-binary @$TRAVIS_BUILD_DIR/tests/android-tampered.apk
   - npm run android-test
 
-  - cordova build ios
+  - cordova compile --debug ios -verbose
   - npm run ios-tamper
   - cd platforms/ios/build/emulator
-  - zip -r $PLUGIN_ROOT/tests/ios-tampered.zip HelloWorld.app
-  - curl -u $SAUCE_USERNAME:$SAUCE_ACCESS_KEY -X POST -H "Content-Type:application/octet-stream" https://saucelabs.com/rest/v1/storage/duddu/$COMMIT_HASH-ios.zip?overwrite=true --data-binary @$PLUGIN_ROOT/tests/ios-tampered.zip
-  - cd $PLUGIN_ROOT
+  - zip -r $TRAVIS_BUILD_DIR/tests/ios-tampered.zip HelloWorld.app
+  - curl -u $SAUCE_USERNAME:$SAUCE_ACCESS_KEY -X POST -H "Content-Type:application/octet-stream" https://saucelabs.com/rest/v1/storage/duddu/$TRAVIS_JOB_ID-ios.zip?overwrite=true --data-binary @$TRAVIS_BUILD_DIR/tests/ios-tampered.zip
+  - cd $TRAVIS_BUILD_DIR
   - npm run ios-test

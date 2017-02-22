@@ -5,7 +5,7 @@
 var fs = require('fs');
 var path = require('path');
 
-var buildPath = path.join(process.env.PLUGIN_ROOT, 'tests/hello/platforms/ios/build/emulator');
+var buildPath = path.join(process.env.TRAVIS_BUILD_DIR, 'tests/hello/platforms/ios/build/emulator');
 var indexAsset = path.join(buildPath, 'HelloWorld.app/www/index.html');
 var content;
 

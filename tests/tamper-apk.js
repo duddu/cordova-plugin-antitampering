@@ -8,7 +8,7 @@ var JSZip = require('jszip');
 
 var apk;
 var indexAsset = 'assets/www/index.html';
-var basePath = path.join(process.env.PLUGIN_ROOT, 'tests');
+var basePath = path.join(process.env.TRAVIS_BUILD_DIR, 'tests');
 var originalApkPath = path.join(basePath, 'hello/platforms/android/build/outputs/apk/android-debug.apk');
 var tamperedApkPath = path.join(basePath, 'android-tampered.apk');
 

@@ -60,7 +60,7 @@ describe('AntiTampering Plugin Test - Android', function () {
                 deviceOrientation: 'portrait',
                 platformVersion: '5.0',
                 platformName: 'Android',
-                app: 'sauce-storage:' + process.env.COMMIT_HASH + '-android.apk',
+                app: 'sauce-storage:' + process.env.TRAVIS_JOB_ID + '-android.apk',
                 name: 'AntiTampering - Android 5.0',
                 tags: ['cordova-plugin-antitampering'],
                 tunnelIdentifier: process.env.TRAVIS_JOB_NUMBER

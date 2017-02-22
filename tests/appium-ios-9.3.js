@@ -61,7 +61,7 @@ describe('AntiTampering Plugin Test - iOS', function () {
                 deviceOrientation: 'portrait',
                 platformVersion: '9.3',
                 platformName: 'iOS',
-                app: 'sauce-storage:' + process.env.COMMIT_HASH + '-ios.zip',
+                app: 'sauce-storage:' + process.env.TRAVIS_JOB_ID + '-ios.zip',
                 name: 'AntiTampering - iOS 9.3',
                 tags: ['cordova-plugin-antitampering'],
                 tunnelIdentifier: process.env.TRAVIS_JOB_NUMBER
@@ -100,6 +100,6 @@ describe('AntiTampering Plugin Test - iOS', function () {
         return driver
             .execute(antiTamperingTest, [])
             .waitFor(wd.asserters.jsCondition('__tamperingTestResult'), 20000, 1000)
-                .should.eventually.contain('count');
+                .should.eventually.contain('match for file index.html');
     });
 });

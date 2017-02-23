@@ -1,9 +1,36 @@
-sudo: false
+matrix:
+  include:
+    - os: linux
+      dist: precise
+      sudo: false
+      language: android
+      jdk: oraclejdk8
+      android:
+        components:
+          - tools
+          - tools
+          - platform-tools
+          - android-25
+          - build-tools-25.0.2
+      env: 
+        - PLATFORM=android
+        - PLATFORM_VERS=5.0
+        - PACKAGE_EXT=apk
+        - CACHE_NAME=android5
+    - os: osx
+      osx_image: xcode7.3
+      language: objective-c
+      env:
+        - PLATFORM=ios
+        - PLATFORM_VERS=9.3
+        - PACKAGE_EXT=zip
+        - CACHE_NAME=ios9
+  exclude:
+    - env: PLATFORM=none
 
-os: osx
-osx_image: xcode7.3
-language: node_js
-node_js: "6"
+env:
+  matrix:
+    - PLATFORM=none
 
 addons:
   sauce_connect: true
@@ -11,12 +38,11 @@ addons:
 before_cache:
   - rm -f $HOME/.gradle/caches/modules-2/modules-2.lock
   - rm -f $HOME/.gradle/caches/*/jarSnapshots/jarSnapshots.bin
-  - rm -f $HOME/.gradle/caches/*/jarSnapshots/cache.properties.lock
-  - rm -f $HOME/.gradle/caches/*/classAnalysis/cache.properties.lock
+  - rm -f $HOME/.gradle/caches/*/jarSnapshots/cache.properties*
+  - rm -f $HOME/.gradle/caches/*/classAnalysis/cache.properties*
   - rm -rf $HOME/.gradle/caches/*/plugin-resolution/
 
 cache:
-  timeout: 900
   directories:
     - $HOME/.m2
     - $HOME/.gradle/caches/
@@ -25,15 +51,11 @@ cache:
     - node_modules
 
 before_install:
-  - wget http://dl.google.com/android/android-sdk_r24.4-macosx.zip
-  - tar -xf android-sdk_r24.4-macosx.zip
-  - echo y | ./android-sdk-macosx/tools/android update sdk -u -a -t android-23,build-tools-23.0.2,platform-tools
-  - export ANDROID_HOME=$TRAVIS_BUILD_DIR/android-sdk-macosx
-  - export PATH=${PATH}:$ANDROID_HOME/tools:$ANDROID_HOME/platform-tools:$ANDROID_HOME/build-tools/23.0.2
+  - nvm install node
 
 install:
-  - npm i -g cordova
-  - npm i
+  - npm install -g cordova
+  - npm install
 
 before_script:
   - npm run lint
@@ -41,22 +63,11 @@ before_script:
 script:
   - cordova create tests/hello com.example.hello HelloWorld
   - cd tests/hello
-  - cordova platform add android@5.2.2 --save
-  - cordova platform add ios@4.2.1 --save
+  - cordova platform add $PLATFORM --save
   - cordova plugin add ../../ --variable ENABLE_CORDOVA_CALLBACK=true --save
   - cordova plugin list
   - cordova prepare
-
-  - cordova compile --debug android -verbose
-  - npm run android-tamper
-  - jarsigner -verbose -keystore $HOME/.android/debug.keystore -storepass android -keypass android $TRAVIS_BUILD_DIR/tests/android-tampered.apk androiddebugkey
-  - curl -u $SAUCE_USERNAME:$SAUCE_ACCESS_KEY -X POST -H "Content-Type:application/octet-stream" https://saucelabs.com/rest/v1/storage/duddu/$TRAVIS_JOB_ID-android.apk?overwrite=true --data-binary @$TRAVIS_BUILD_DIR/tests/android-tampered.apk
-  - npm run android-test
-
-  - cordova compile --debug ios -verbose
-  - npm run ios-tamper
-  - cd platforms/ios/build/emulator
-  - zip -r $TRAVIS_BUILD_DIR/tests/ios-tampered.zip HelloWorld.app
-  - curl -u $SAUCE_USERNAME:$SAUCE_ACCESS_KEY -X POST -H "Content-Type:application/octet-stream" https://saucelabs.com/rest/v1/storage/duddu/$TRAVIS_JOB_ID-ios.zip?overwrite=true --data-binary @$TRAVIS_BUILD_DIR/tests/ios-tampered.zip
-  - cd $TRAVIS_BUILD_DIR
-  - npm run ios-test
+  - cordova compile --debug $PLATFORM -verbose
+  - npm run $PLATFORM-tamper
+  - curl -u $SAUCE_USERNAME:$SAUCE_ACCESS_KEY -X POST -H "Content-Type:application/octet-stream" https://saucelabs.com/rest/v1/storage/duddu/$TRAVIS_JOB_ID-$PLATFORM.$PACKAGE_EXT?overwrite=true --data-binary @$TRAVIS_BUILD_DIR/tests/$PLATFORM-tampered.$PACKAGE_EXT
+  - npm run $PLATFORM-test

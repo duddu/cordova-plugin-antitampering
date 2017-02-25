@@ -1,5 +1,10 @@
 # Changelog
 
+## v0.1.2
+
+- Fixed bug in hooks regex to clear the previous build hashes
+- CI: new builds trigger an anti-tampering test on Sauce Labs emulators
+
 ## v0.1.1
 
 - Added "onload" feature param to force the plugin instantiation

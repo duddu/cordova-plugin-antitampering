@@ -25,9 +25,19 @@
   ],
   "license": "MIT",
   "devDependencies": {
-    "eslint": "3.15.0"
+    "chai": "3.5.0",
+    "chai-as-promised": "6.0.0",
+    "colors": "1.1.2",
+    "eslint": "3.15.0",
+    "jszip": "3.1.3",
+    "mocha": "3.2.0",
+    "wd": "1.1.3"
   },
   "scripts": {
-    "test": "eslint \"**/*.js\""
+    "lint": "eslint \"+(scripts|tests|www)/**/*.js\"",
+    "tamper-android": "node tests/tamper/android.js && jarsigner -verbose -keystore $HOME/.android/debug.keystore -storepass android -keypass android $TRAVIS_BUILD_DIR/tests/android-tampered.apk androiddebugkey",
+    "tamper-ios": "node tests/tamper/ios.js && cd $TRAVIS_BUILD_DIR/tests/hello/platforms/ios/build/emulator && zip -r $TRAVIS_BUILD_DIR/tests/ios-tampered.zip HelloWorld.app && cd $TRAVIS_BUILD_DIR",
+    "appium-android": "mocha tests/appium/android.js",
+    "appium-ios": "mocha tests/appium/ios.js"
   }
 }

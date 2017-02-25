@@ -3,11 +3,13 @@
   "env": {
     "browser": true,
     "node": true,
-    "jasmine": true
+    "jasmine": true,
+    "mocha": true
   },
 
   "globals": {
-    "angular": false
+    "angular": false,
+    "cordova": true
   },
 
   "rules": {

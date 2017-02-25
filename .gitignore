@@ -21,3 +21,4 @@ jsconfig.json
 nbproject
 Thumbs.db
 node_modules
+tests/hello

@@ -35,9 +35,9 @@
   },
   "scripts": {
     "lint": "eslint \"+(scripts|tests|www)/**/*.js\"",
-    "android-tamper": "node tests/tamper-apk.js && jarsigner -verbose -keystore $HOME/.android/debug.keystore -storepass android -keypass android $TRAVIS_BUILD_DIR/tests/android-tampered.apk androiddebugkey",
-    "android-test": "mocha tests/appium-android-5.0.js",
-    "ios-tamper": "node tests/tamper-app.js && cd $TRAVIS_BUILD_DIR/tests/hello/platforms/ios/build/emulator && zip -r $TRAVIS_BUILD_DIR/tests/ios-tampered.zip HelloWorld.app && cd $TRAVIS_BUILD_DIR",
-    "ios-test": "mocha tests/appium-ios-9.3.js"
+    "tamper-android": "node tests/tamper/android.js && jarsigner -verbose -keystore $HOME/.android/debug.keystore -storepass android -keypass android $TRAVIS_BUILD_DIR/tests/android-tampered.apk androiddebugkey",
+    "tamper-ios": "node tests/tamper/ios.js && cd $TRAVIS_BUILD_DIR/tests/hello/platforms/ios/build/emulator && zip -r $TRAVIS_BUILD_DIR/tests/ios-tampered.zip HelloWorld.app && cd $TRAVIS_BUILD_DIR",
+    "appium-android": "mocha tests/appium/android.js",
+    "appium-ios": "mocha tests/appium/ios.js"
   }
 }

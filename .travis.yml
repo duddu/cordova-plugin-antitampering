@@ -68,6 +68,6 @@ script:
   - cordova plugin list
   - cordova prepare
   - cordova compile --debug $PLATFORM -verbose
-  - npm run $PLATFORM-tamper
+  - npm run tamper-$PLATFORM
   - curl -u $SAUCE_USERNAME:$SAUCE_ACCESS_KEY -X POST -H "Content-Type:application/octet-stream" https://saucelabs.com/rest/v1/storage/duddu/$TRAVIS_JOB_ID-$PLATFORM.$PACKAGE_EXT?overwrite=true --data-binary @$TRAVIS_BUILD_DIR/tests/$PLATFORM-tampered.$PACKAGE_EXT
-  - npm run $PLATFORM-test
+  - npm run appium-$PLATFORM

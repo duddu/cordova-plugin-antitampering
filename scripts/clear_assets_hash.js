@@ -26,8 +26,9 @@ module.exports = function (context) {
                 exit('Unable to read java class source at path ' + sourceFile, e);
             }
 
-            content = content.replace(/assetsHashes\s*=.+\s*new.*(\(.+\)(\s|.)*\}\})/, function (match, group) {
-                return match.replace(group, '()');
+            content = content.replace(/\s*put\("[^"]+",\s"[^"]{64}"\);/g, '')
+            .replace(/assetsHashes\s*=.+\s*new.*(\(\d+\)[^\w]*)\);/, function (match, group) {
+                return match.replace(group, '()\n    ');
             });
 
             try {

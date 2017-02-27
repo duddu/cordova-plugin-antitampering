@@ -32,6 +32,10 @@ env:
   matrix:
     - PLATFORM=none
 
+branches:
+  except:
+    - /^\d+\.\d+\.\d+$/
+
 addons:
   sauce_connect: true
 

@@ -6,17 +6,38 @@ module.exports = function (context) {
     var path = context.requireCordovaModule('path');
     var fs = context.requireCordovaModule('fs');
     var cordovaUtil = context.requireCordovaModule('cordova-lib/src/cordova/util');
+    var platforms = context.requireCordovaModule('cordova-lib/src/platforms/platforms');
     var projectRoot = cordovaUtil.isCordova();
     var pluginInfo = context.opts.plugin.pluginInfo;
 
     process.stdout.write('[ANTI-TAMPERING] Saving a hash for each platforms asset \n');
 
-    function getPlatformAssets (dir) {
+    function getExtensionsPreference (platform) {
+        var platformConfigPath = path.join(projectRoot, 'platforms', platform, platform + '.json');
+        var platformConfig = require(platformConfigPath);
+        var extensionsPref = platformConfig.installed_plugins[pluginInfo.id].EXCLUDE_ASSETS_EXTENSIONS;
+        if (typeof extensionsPref !== 'string' || !extensionsPref.length) {
+            return false;
+        }
+        var extensions = [];
+        extensionsPref.split(/\s+|,+/).forEach(function (ext) {
+            if (ext !== '') {
+                extensions.push(ext);
+            }
+        });
+        if (!extensions.length) {
+            return null;
+        }
+        return new RegExp('.*\.(' + extensions.join('|') + ')$');
+    }
+
+    function getPlatformAssets (platform, dir) {
         var assetsList = [];
         var list = fs.readdirSync(dir);
+        var excludedExts = getExtensionsPreference(platform);
         list.filter(function (file) {
             return fs.statSync(path.join(dir, file)).isFile() &&
-            /.*\.(js|html|htm|css)$/.test(file);
+            (!excludedExts || !excludedExts.test(file));
         }).forEach(function (file) {
             assetsList.push(path.join(dir, file));
         });
@@ -24,7 +45,7 @@ module.exports = function (context) {
             return fs.statSync(path.join(dir, file)).isDirectory();
         }).forEach(function (file) {
             var subDir = path.join(dir, file);
-            var subFileList = getPlatformAssets(subDir);
+            var subFileList = getPlatformAssets(platform, subDir);
             assetsList = assetsList.concat(subFileList);
         });
         return assetsList;
@@ -33,7 +54,6 @@ module.exports = function (context) {
     context.opts.platforms.filter(function (platform) {
         return pluginInfo.getPlatformsArray().indexOf(platform) > -1;
     }).forEach(function (platform) {
-        var platforms = context.requireCordovaModule('cordova-lib/src/platforms/platforms');
         var platformPath = path.join(projectRoot, 'platforms', platform);
         var platformApi = platforms.getPlatformApi(platform, platformPath);
         var platformInfo = platformApi.getPlatformInfo();
@@ -42,7 +62,7 @@ module.exports = function (context) {
         var sourceFile;
         var content;
 
-        var hashes = getPlatformAssets(platformWww).map(function (file) {
+        var hashes = getPlatformAssets(platform, platformWww).map(function (file) {
             var fileName = file.replace(/\\/g, '/');
             fileName = fileName.replace(platformWww.replace(/\\/g, '/') + '/', '');
             var hash;
@@ -78,11 +98,13 @@ module.exports = function (context) {
             })
             .replace(/assetsHashes\s*=.+\s*new.*(\(.*\))/, function (match, group) {
                 var replace = match.replace(group, '(' + (hashes.length || '') + ')');
-                replace += ' {{\n' + tab();
-                hashes.forEach(function (h) {
-                    replace += tab(2) + 'put("'+ h.file +'", "'+ h.hash +'");\n' + tab();
-                });
-                replace += tab() + '}}';
+                if (hashes.length) {
+                    replace += ' {{\n' + tab();
+                    hashes.forEach(function (h) {
+                        replace += tab(2) + 'put("'+ h.file +'", "'+ h.hash +'");\n' + tab();
+                    });
+                    replace += tab() + '}}';
+                }
                 return replace;
             });
 

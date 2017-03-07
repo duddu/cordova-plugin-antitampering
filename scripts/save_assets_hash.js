@@ -69,7 +69,7 @@ module.exports = function (context) {
             var hashHex;
             hash = crypto.createHash('sha256');
             try {
-                hash.update(fs.readFileSync(file, 'utf-8'), 'utf8');
+                hash.update(fs.readFileSync(file), 'utf8');
             } catch (e) {
                 exit('Unable to read file at path ' + file, e);
             }

@@ -2,7 +2,7 @@
 <plugin xmlns="http://apache.org/cordova/ns/plugins/1.0"
     xmlns:android="http://schemas.android.com/apk/res/android"
     id="cordova-plugin-antitampering"
-    version="0.1.2">
+    version="0.2.0">
     <name>Anti-Tampering</name>
     <description>Verify the integrity of cordova static assets - Android / iOS</description>
     <author>Davide Doronzo</author>
@@ -17,6 +17,7 @@
         <clobbers target="cordova.plugins.AntiTampering" />
     </js-module>
 
+    <preference name="EXCLUDE_ASSETS_EXTENSIONS" default=" " />
     <preference name="ENABLE_CORDOVA_CALLBACK" default="false" />
 
     <hook type="after_plugin_install" src="scripts/enable_cordova_callback.js" />

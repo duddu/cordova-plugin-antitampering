@@ -1,5 +1,10 @@
 # Changelog
 
+## v0.2.0
+
+- **BREAKING CHANGE**: All assets are now validated by default
+- Added EXCLUDE_ASSETS_EXTENSIONS preference to exclude assets from tampering check
+
 ## v0.1.2
 
 - Fixed bug in hooks regex to clear the previous build hashes

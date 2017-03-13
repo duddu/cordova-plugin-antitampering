@@ -17,7 +17,7 @@
         <clobbers target="cordova.plugins.AntiTampering" />
     </js-module>
 
-    <preference name="EXCLUDE_ASSETS_EXTENSIONS" />
+    <preference name="EXCLUDE_ASSETS_EXTENSIONS" default=" " />
     <preference name="ENABLE_CORDOVA_CALLBACK" default="false" />
 
     <hook type="after_plugin_install" src="scripts/enable_cordova_callback.js" />

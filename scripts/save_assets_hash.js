@@ -6,26 +6,50 @@ module.exports = function (context) {
     var path = context.requireCordovaModule('path');
     var fs = context.requireCordovaModule('fs');
     var cordovaUtil = context.requireCordovaModule('cordova-lib/src/cordova/util');
-    var projectRoot = cordovaUtil.isCordova();
+    var platforms = context.requireCordovaModule('cordova-lib/src/platforms/platforms');
+    var isVerbose = context.opts.options && context.opts.options.verbose;
     var pluginInfo = context.opts.plugin.pluginInfo;
+    var projectRoot = cordovaUtil.isCordova();
 
     process.stdout.write('[ANTI-TAMPERING] Saving a hash for each platforms asset \n');
 
-    function getPlatformAssets (dir) {
+    function getExtensionsPreference (platform) {
+        var platformConfigPath = path.join(projectRoot, 'platforms', platform, platform + '.json');
+        var platformConfig = require(platformConfigPath);
+        var extensionsPref = platformConfig.installed_plugins[pluginInfo.id].EXCLUDE_ASSETS_EXTENSIONS;
+        if (typeof extensionsPref !== 'string' || !extensionsPref.trim().length) {
+            if (isVerbose) {
+                process.stdout.write('No extensions to exclude provided \n');
+            }
+            return false;
+        }
+        var extensions = [];
+        extensionsPref.split(/\s+|,+/).forEach(function (ext) {
+            if (ext !== '') {
+                extensions.push(ext);
+            }
+        });
+        if (isVerbose) {
+            process.stdout.write('Excluding following extensions: ' + extensions.join(',') + ' \n');
+        }
+        if (!extensions.length) {
+            return null;
+        }
+        return new RegExp('.*\.(' + extensions.join('|') + ')$');
+    }
+
+    function getPlatformAssets (dir, excludeExts) {
         var assetsList = [];
         var list = fs.readdirSync(dir);
-        list.filter(function (file) {
-            return fs.statSync(path.join(dir, file)).isFile() &&
-            /.*\.(js|html|htm|css)$/.test(file);
-        }).forEach(function (file) {
-            assetsList.push(path.join(dir, file));
-        });
-        list.filter(function (file) {
-            return fs.statSync(path.join(dir, file)).isDirectory();
-        }).forEach(function (file) {
-            var subDir = path.join(dir, file);
-            var subFileList = getPlatformAssets(subDir);
-            assetsList = assetsList.concat(subFileList);
+        list.map(function (file) {
+            var filePath = path.join(dir, file);
+            if (fs.statSync(filePath).isDirectory()) {
+                var subDirList = getPlatformAssets(filePath, excludeExts);
+                assetsList = assetsList.concat(subDirList);
+            }
+            if (fs.statSync(filePath).isFile() && (!excludeExts || !excludeExts.test(file))) {
+                assetsList.push(filePath);
+            }
         });
         return assetsList;
     }
@@ -33,28 +57,28 @@ module.exports = function (context) {
     context.opts.platforms.filter(function (platform) {
         return pluginInfo.getPlatformsArray().indexOf(platform) > -1;
     }).forEach(function (platform) {
-        var platforms = context.requireCordovaModule('cordova-lib/src/platforms/platforms');
         var platformPath = path.join(projectRoot, 'platforms', platform);
         var platformApi = platforms.getPlatformApi(platform, platformPath);
         var platformInfo = platformApi.getPlatformInfo();
         var platformWww = platformInfo.locations.www;
+        var excludeExts = getExtensionsPreference(platform);
         var pluginDir;
         var sourceFile;
         var content;
 
-        var hashes = getPlatformAssets(platformWww).map(function (file) {
+        var hashes = getPlatformAssets(platformWww, excludeExts).map(function (file) {
             var fileName = file.replace(/\\/g, '/');
             fileName = fileName.replace(platformWww.replace(/\\/g, '/') + '/', '');
             var hash;
             var hashHex;
             hash = crypto.createHash('sha256');
             try {
-                hash.update(fs.readFileSync(file, 'utf-8'), 'utf8');
+                hash.update(fs.readFileSync(file), 'utf8');
             } catch (e) {
                 exit('Unable to read file at path ' + file, e);
             }
             hashHex = hash.digest('hex');
-            if (context.opts.options.verbose) {
+            if (isVerbose) {
                 process.stdout.write('Hash: ' + hashHex + ' - ' + fileName + '\n');
             }
             return {
@@ -73,18 +97,20 @@ module.exports = function (context) {
             }
 
             content = content.replace(/\s*put\("[^"]+",\s"[^"]{64}"\);/g, '')
-            .replace(/assetsHashes\s*=.+\s*new.*(\(\d+\)[^\w]*)\);/, function (match, group) {
-                return match.replace(group, '()\n' + tab());
-            })
-            .replace(/assetsHashes\s*=.+\s*new.*(\(.*\))/, function (match, group) {
-                var replace = match.replace(group, '(' + (hashes.length || '') + ')');
-                replace += ' {{\n' + tab();
-                hashes.forEach(function (h) {
-                    replace += tab(2) + 'put("'+ h.file +'", "'+ h.hash +'");\n' + tab();
+                .replace(/assetsHashes\s*=.+\s*new.*(\(\d+\)[^\w]*)\);/, function (match, group) {
+                    return match.replace(group, '()\n' + tab());
+                })
+                .replace(/assetsHashes\s*=.+\s*new.*(\(.*\))/, function (match, group) {
+                    var replace = match.replace(group, '(' + (hashes.length || '') + ')');
+                    if (hashes.length) {
+                        replace += ' {{\n' + tab();
+                        hashes.forEach(function (h) {
+                            replace += tab(2) + 'put("' + h.file + '", "' + h.hash + '");\n' + tab();
+                        });
+                        replace += tab() + '}}';
+                    }
+                    return replace;
                 });
-                replace += tab() + '}}';
-                return replace;
-            });
 
             try {
                 fs.writeFileSync(sourceFile, content, 'utf-8');

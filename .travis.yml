@@ -34,7 +34,7 @@ env:
 
 branches:
   except:
-    - /^\d+\.\d+\.\d+$/
+    - /^\d+\.\d+(\.\d+)?(-\S*)?$/
 
 addons:
   sauce_connect: true
@@ -43,6 +43,7 @@ before_cache:
   - rm -f $HOME/.gradle/caches/modules-2/modules-2.lock
   - rm -f $HOME/.gradle/caches/*/jarSnapshots/jarSnapshots.bin
   - rm -f $HOME/.gradle/caches/*/jarSnapshots/cache.properties*
+  - rm -f $HOME/.gradle/caches/*/classAnalysis/classAnalysis.bin
   - rm -f $HOME/.gradle/caches/*/classAnalysis/cache.properties*
   - rm -rf $HOME/.gradle/caches/*/plugin-resolution/
 
@@ -70,7 +71,7 @@ script:
   - cordova platform add $PLATFORM --save
   - cordova plugin add ../../ --variable ENABLE_CORDOVA_CALLBACK=true --save
   - cordova plugin list
-  - cordova prepare
+  - cordova prepare -verbose
   - cordova compile --debug $PLATFORM -verbose
   - npm run tamper-$PLATFORM
   - curl -u $SAUCE_USERNAME:$SAUCE_ACCESS_KEY -X POST -H "Content-Type:application/octet-stream" https://saucelabs.com/rest/v1/storage/duddu/$TRAVIS_JOB_ID-$PLATFORM.$PACKAGE_EXT?overwrite=true --data-binary @$TRAVIS_BUILD_DIR/tests/$PLATFORM-tampered.$PACKAGE_EXT

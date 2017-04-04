@@ -7,12 +7,16 @@ module.exports = function (context) {
     var projectRoot = cordovaUtil.isCordova();
     var pluginInfo = context.opts.plugin.pluginInfo;
     var platforms = context.opts.platforms || context.opts.cordova.platforms;
+    var pluginConfigs = {};
 
-    function getCallbackPreference (platform) {
-        var platformConfigPath = path.join(projectRoot, 'platforms', platform, platform + '.json');
-        var platformConfig = require(platformConfigPath);
-        var callbackPreference = platformConfig.installed_plugins[pluginInfo.id].ENABLE_CORDOVA_CALLBACK;
-        return String(callbackPreference) === 'true';
+    function getPreference (preference, platform) {
+        if (!pluginConfigs[platform]) {
+            var platformConfigPath = path.join(projectRoot, 'platforms', platform, platform + '.json');
+            var platformConfig = require(platformConfigPath);
+            pluginConfigs[platform] = platformConfig.installed_plugins[pluginInfo.id];
+        }
+        var value = pluginConfigs[platform][preference];
+        return String(value) === 'true';
     }
 
     platforms.filter(function (platform) {
@@ -23,11 +27,14 @@ module.exports = function (context) {
         var sourceFile;
         var content;
 
-        if (!getCallbackPreference(platform)) {
-            return;
+        var callbackPreference = getPreference('ENABLE_CORDOVA_CALLBACK', platform);
+        if (callbackPreference) {
+            process.stdout.write('[ANTI-TAMPERING] Enabling cordova callback for ' + platform + '\n');
         }
-
-        process.stdout.write('[ANTI-TAMPERING] Enabling cordova callback for ' + platform + '\n');
+        var debugPreference = getPreference('ENABLE_DEBUG_DETECTION', platform);
+        if (debugPreference) {
+            process.stdout.write('[ANTI-TAMPERING] Enabling debug detection for ' + platform + '\n');
+        }
 
         if (platform === 'android') {
             pluginDir = path.join(platformPath, 'src');
@@ -38,7 +45,12 @@ module.exports = function (context) {
                 exit('Unable to read java class source at path ' + sourceFile, e);
             }
 
-            content = content.replace(/.*checkAndStopExecution\(\);[\r\n]*/, '');
+            if (callbackPreference) {
+                content = content.replace(/.*checkAndStopExecution\(\);[\r\n]*/, '');
+            }
+            if (!debugPreference) {
+                content = content.replace(/.*DebugDetection\..+;[\r\n]*/g, '');
+            }
 
             try {
                 fs.writeFileSync(sourceFile, content, 'utf-8');
@@ -58,8 +70,12 @@ module.exports = function (context) {
                 exit('Unable to read obj-c source at path ' + sourceFile, e);
             }
 
-            content = content.replace(/.*\[self checkAndStopExecution\];[\n\r]*/, '')
-                .replace(/-\(void\)checkAndStopExecution\{[\S\s]*\}\s*-/, '-');
+            if (callbackPreference) {
+                content = content.replace(/.*\[self checkAndStopExecution\];[\r\n]*/, '');
+            }
+            if (!debugPreference) {
+                content = content.replace(/.*\[self debugDetection\];[\r\n]*/g, '');
+            }
 
             try {
                 fs.writeFileSync(sourceFile, content, 'utf-8');

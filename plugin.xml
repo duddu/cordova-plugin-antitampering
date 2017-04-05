@@ -19,11 +19,12 @@
 
     <preference name="EXCLUDE_ASSETS_EXTENSIONS" default=" " />
     <preference name="ENABLE_CORDOVA_CALLBACK" default="false" />
+    <preference name="ENABLE_DEBUG_DETECTION" default="false" />
 
-    <hook type="after_plugin_install" src="scripts/enable_cordova_callback.js" />
-    <hook type="after_prepare" src="scripts/enable_cordova_callback.js" />
-    <hook type="after_prepare" src="scripts/clear_assets_hash.js" />
-    <hook type="before_compile" src="scripts/save_assets_hash.js" />
+    <hook type="after_plugin_install" src="scripts/handle_plugin_preferences.js" />
+    <hook type="after_prepare" src="scripts/handle_plugin_preferences.js" />
+    <hook type="after_prepare" src="scripts/clear_assets_hashes.js" />
+    <hook type="before_compile" src="scripts/save_assets_hashes.js" />
 
     <platform name="android">
 
@@ -36,6 +37,7 @@
 
         <source-file src="src/android/com/duddu/antitampering/AntiTamperingPlugin.java" target-dir="src/com/duddu/antitampering" />
         <source-file src="src/android/com/duddu/antitampering/AssetsIntegrity.java" target-dir="src/com/duddu/antitampering" />
+        <source-file src="src/android/com/duddu/antitampering/DebugDetection.java" target-dir="src/com/duddu/antitampering" />
         <source-file src="src/android/com/duddu/antitampering/TamperingException.java" target-dir="src/com/duddu/antitampering" />
 
     </platform>

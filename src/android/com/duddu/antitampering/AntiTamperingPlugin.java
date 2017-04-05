@@ -1,5 +1,7 @@
 package com.duddu.antitampering;
 
+import android.app.Activity;
+
 import org.apache.cordova.CallbackContext;
 import org.apache.cordova.CordovaInterface;
 import org.apache.cordova.CordovaPlugin;
@@ -12,14 +14,18 @@ import org.json.JSONException;
 
 public class AntiTamperingPlugin extends CordovaPlugin {
 
+    private Activity activity;
+
     public void initialize(CordovaInterface cordova, CordovaWebView webView) {
+        activity = cordova.getActivity();
         checkAndStopExecution();
         super.initialize(cordova, webView);
     }
 
     private void checkAndStopExecution() {
         try {
-            AssetsIntegrity.check(cordova.getActivity().getAssets());
+            AssetsIntegrity.check(activity.getAssets());
+            DebugDetection.check(activity.getPackageName());
         } catch (final Exception e) {
             cordova.getActivity().runOnUiThread(new Runnable() {
                 public void run () {
@@ -38,8 +44,9 @@ public class AntiTamperingPlugin extends CordovaPlugin {
                 public void run () {
                     PluginResult result;
                     try {
+                        DebugDetection.check(activity.getPackageName());
                         JSONObject response = new JSONObject();
-                        response.put("assets", AssetsIntegrity.check(cordova.getActivity().getAssets()));
+                        response.put("assets", AssetsIntegrity.check(activity.getAssets()));
                         result = new PluginResult(PluginResult.Status.OK, response);
                     } catch (Exception e) {
                         result = new PluginResult(PluginResult.Status.ERROR, e.toString());

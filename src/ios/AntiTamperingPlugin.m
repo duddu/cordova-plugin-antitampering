@@ -33,8 +33,15 @@
     }];
 }
 
+-(void)debugDetection{
+    #ifdef DEBUG
+        @throw([NSException exceptionWithName:@"DebugDetectedException" reason:@"App running in Debug mode" userInfo:nil]);
+    #endif
+}
+
 -(void)checkAndStopExecution{
     @try {
+        [self debugDetection];
         [self checkAssetsIntegrity];
     } @catch (NSException *exception) {
         NSLog(@"Anti-Tampering check failed! %@: %@", [exception name], [exception reason]);
@@ -48,6 +55,7 @@
 
     [self.commandDelegate runInBackground:^{
         @try {
+            [self debugDetection];
             [self checkAssetsIntegrity];
             NSDictionary* response = @{
                 @"assets": @{

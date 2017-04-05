@@ -5,8 +5,9 @@ Anti-Tampering Cordova Plugin
 [![Travis branch](https://img.shields.io/travis/duddu/cordova-plugin-antitampering/master.svg)](https://travis-ci.org/duddu/cordova-plugin-antitampering)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/596be7addc734ba9979e66713d237052)](https://www.codacy.com/app/duddu/cordova-plugin-antitampering?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=duddu/cordova-plugin-antitampering&amp;utm_campaign=Badge_Grade)
 
-This plugin verifies the integrity of the static assets of your Cordova application, checking if the files have changed since the original build.  
-During the build phase, it creates an hash (SHA-256) for each file found under the `www` directory of your platforms; then, every time the app is launched, it compares those hashes with ones created at run-time from the actual assets loaded.  
+This plugin verifies the **integrity of the static assets** of your Cordova application, checking if the files have changed since the original build.  
+Before the compile phase, it creates a hash (SHA-256) for each file found under the `www` directory of your platforms; then, every time the app is launched, it compares those hashes with ones created at run-time from the actual assets loaded.  
+The plugin also provides optional **debug detection**, to prevent your App from running in debug mode.  
 
 Supports Android and iOS.
 
@@ -73,6 +74,14 @@ By default (since v0.2.0), the integrity check run against all the assets found.
 
 The value of this variable should be a list of extensions, separated by comma or space. 
 
+### Debug Detection
+
+Optional debug detection can be enabled using the `ENABLE_DEBUG_DETECTION` variable (default `false`) while installing the plugin:
+
+    cordova plugin add cordova-plugin-antitampering --variable ENABLE_DEBUG_DETECTION=true --save
+
+If enabled (i.e. for release builds in production), the plugin also verifies - before any other check - that the app is not running in debug mode / doesn't have a debugger attached. As for the assets integrity check, if this check fails the app will crash (or return an error message on javascript callback, if `ENABLE_CORDOVA_CALLBACK=true`). 
+
 ## Additional info
 
 - The plugin recursively searches for files within the `www` directory of each platform (i.e. cordova assets); no other directory is considered.
@@ -83,7 +92,7 @@ The value of this variable should be a list of extensions, separated by comma or
 
 This plugin can't be considered as an exhaustive integrity check for your app: an app can always be tampered somehow. Remember to protect any sensitive logic, obfuscate your Java source for Android, prevent your app to be debuggable, and consider to encrypt your static assets.
 
-## To do
+## Todo
 
 - Add a check for the version, versionCode, and package name of the app
 - Add a check for the signing certificate
@@ -93,6 +102,4 @@ This plugin can't be considered as an exhaustive integrity check for your app: a
 
 Any suggestions, remarks, or pull requests are welcome!
 
-If you want to contribute: fork the repo, create a new branch, and submit a PR *to the develop branch* of this repo. I will merge into develop, and then into master on the next release. 
-
-Please make sure your code passes ESLint validation with the `.eslintrc` provided.
+If you want to contribute: fork the repo, create a new branch, and submit a PR *to the develop branch* of this repo. I will merge into develop, and then into master on the next release tag.

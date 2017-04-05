@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.2.1
+
+- Added ENABLE_DEBUG_DETECTION preference to prevent debuggable builds
+
 ## v0.2.0
 
 - **BREAKING CHANGE**: All assets are now validated by default

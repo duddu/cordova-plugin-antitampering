@@ -16,7 +16,11 @@ module.exports = function (context) {
     function getExtensionsPreference (platform) {
         var platformConfigPath = path.join(projectRoot, 'platforms', platform, platform + '.json');
         var platformConfig = require(platformConfigPath);
-        var extensionsPref = platformConfig.installed_plugins[pluginInfo.id].EXCLUDE_ASSETS_EXTENSIONS;
+        try {
+            var extensionsPref = platformConfig.installed_plugins[pluginInfo.id].EXCLUDE_ASSETS_EXTENSIONS;
+        } catch (e) {
+            exit('Plugin ' + pluginInfo.id + ' not found in ' + platform + '.json', e);
+        }
         if (typeof extensionsPref !== 'string' || !extensionsPref.trim().length) {
             if (isVerbose) {
                 process.stdout.write('No extensions to exclude provided \n');

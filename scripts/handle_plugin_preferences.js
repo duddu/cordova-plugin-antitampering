@@ -13,7 +13,11 @@ module.exports = function (context) {
         if (!pluginConfigs[platform]) {
             var platformConfigPath = path.join(projectRoot, 'platforms', platform, platform + '.json');
             var platformConfig = require(platformConfigPath);
-            pluginConfigs[platform] = platformConfig.installed_plugins[pluginInfo.id];
+            try {
+                pluginConfigs[platform] = platformConfig.installed_plugins[pluginInfo.id];
+            } catch (e) {
+                exit('Plugin ' + pluginInfo.id + ' not found in ' + platform + '.json', e);
+            }
         }
         var value = pluginConfigs[platform][preference];
         return String(value) === 'true';

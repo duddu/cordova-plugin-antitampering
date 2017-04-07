@@ -1,17 +1,16 @@
 #!/usr/bin/env node
 
+var helpers = require('./helpers');
+
 module.exports = function (context) {
     var path = context.requireCordovaModule('path');
     var fs = context.requireCordovaModule('fs');
     var cordovaUtil = context.requireCordovaModule('cordova-lib/src/cordova/util');
     var projectRoot = cordovaUtil.isCordova();
-    var pluginInfo = context.opts.plugin.pluginInfo;
 
     process.stdout.write('[ANTI-TAMPERING] Clearing assets hash from previous build\n');
 
-    context.opts.platforms.filter(function (platform) {
-        return pluginInfo.getPlatformsArray().indexOf(platform) > -1;
-    }).forEach(function (platform) {
+    helpers.getPlatformsList(context).forEach(function (platform) {
         var platformPath = path.join(projectRoot, 'platforms', platform);
         var pluginDir;
         var sourceFile;

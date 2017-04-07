@@ -1,28 +1,22 @@
 #!/usr/bin/env node
 
 var crypto = require('crypto');
+var helpers = require('./helpers');
 
 module.exports = function (context) {
     var path = context.requireCordovaModule('path');
     var fs = context.requireCordovaModule('fs');
     var cordovaUtil = context.requireCordovaModule('cordova-lib/src/cordova/util');
     var platforms = context.requireCordovaModule('cordova-lib/src/platforms/platforms');
-    var isVerbose = context.opts.options && context.opts.options.verbose;
-    var pluginInfo = context.opts.plugin.pluginInfo;
     var projectRoot = cordovaUtil.isCordova();
+    var excludeExts = getExtensionsPreference();
 
     process.stdout.write('[ANTI-TAMPERING] Saving a hash for each platforms asset \n');
 
-    function getExtensionsPreference (platform) {
-        var platformConfigPath = path.join(projectRoot, 'platforms', platform, platform + '.json');
-        var platformConfig = require(platformConfigPath);
-        try {
-            var extensionsPref = platformConfig.installed_plugins[pluginInfo.id].EXCLUDE_ASSETS_EXTENSIONS;
-        } catch (e) {
-            exit('Plugin ' + pluginInfo.id + ' not found in ' + platform + '.json', e);
-        }
+    function getExtensionsPreference () {
+        var extensionsPref = helpers.getPluginPreference(context, 'EXCLUDE_ASSETS_EXTENSIONS');
         if (typeof extensionsPref !== 'string' || !extensionsPref.trim().length) {
-            if (isVerbose) {
+            if (helpers.isVerbose(context)) {
                 process.stdout.write('No extensions to exclude provided \n');
             }
             return false;
@@ -33,7 +27,7 @@ module.exports = function (context) {
                 extensions.push(ext);
             }
         });
-        if (isVerbose) {
+        if (helpers.isVerbose(context)) {
             process.stdout.write('Excluding following extensions: ' + extensions.join(',') + ' \n');
         }
         if (!extensions.length) {
@@ -42,7 +36,7 @@ module.exports = function (context) {
         return new RegExp('.*\.(' + extensions.join('|') + ')$');
     }
 
-    function getPlatformAssets (dir, excludeExts) {
+    function getPlatformAssets (dir) {
         var assetsList = [];
         var list = fs.readdirSync(dir);
         list.map(function (file) {
@@ -58,19 +52,16 @@ module.exports = function (context) {
         return assetsList;
     }
 
-    context.opts.platforms.filter(function (platform) {
-        return pluginInfo.getPlatformsArray().indexOf(platform) > -1;
-    }).forEach(function (platform) {
+    helpers.getPlatformsList(context).forEach(function (platform) {
         var platformPath = path.join(projectRoot, 'platforms', platform);
         var platformApi = platforms.getPlatformApi(platform, platformPath);
         var platformInfo = platformApi.getPlatformInfo();
         var platformWww = platformInfo.locations.www;
-        var excludeExts = getExtensionsPreference(platform);
         var pluginDir;
         var sourceFile;
         var content;
 
-        var hashes = getPlatformAssets(platformWww, excludeExts).map(function (file) {
+        var hashes = getPlatformAssets(platformWww).map(function (file) {
             var fileName = file.replace(/\\/g, '/');
             fileName = fileName.replace(platformWww.replace(/\\/g, '/') + '/', '');
             var hash;
@@ -82,8 +73,8 @@ module.exports = function (context) {
                 exit('Unable to read file at path ' + file, e);
             }
             hashHex = hash.digest('hex');
-            if (isVerbose) {
-                process.stdout.write('Hash: ' + hashHex + ' - ' + fileName + '\n');
+            if (helpers.isVerbose(context)) {
+                process.stdout.write('Hash: ' + hashHex + ' < ' + fileName + '\n');
             }
             return {
                 file: new Buffer(fileName).toString('base64'),

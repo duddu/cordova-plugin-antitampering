@@ -1,5 +1,10 @@
 # Changelog
 
+## v0.2.2
+
+- Added some helpers functions for hooks scripts
+- Plugin preferences explicitly set in config.xml take precedence over first-install variables
+
 ## v0.2.1
 
 - Added ENABLE_DEBUG_DETECTION preference to prevent debuggable builds

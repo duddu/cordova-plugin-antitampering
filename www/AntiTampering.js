@@ -14,9 +14,9 @@ module.exports = new AntiTampering();
 
 if (typeof angular !== 'undefined') {
     angular.module('duddu.antitampering', []).factory('$antitampering', ['$q', function ($q) {
+        var antitampering = new AntiTampering();
         function getResult (action) {
             var result = $q.defer();
-            var antitampering = new AntiTampering();
             antitampering[action].apply(antitampering, [
                 function (response) {
                     result.resolve(response);

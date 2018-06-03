@@ -1,6 +1,6 @@
 'use strict';
 
-/* eslint no-process-env: 0 */
+/* eslint no-process-env: 0, max-len: 0 */
 
 var defaults = {
     browserName: '',
@@ -14,7 +14,7 @@ var defaults = {
 };
 
 exports.android = Object.assign({
-    deviceName: 'Android Emulator',
+    deviceName: process.env.PLATFORM === 'android' && Number(process.env.PLATFORM_VERS) > 6 ? 'Android GoogleAPI Emulator' : 'Android Emulator',
     platformName: 'Android'
 }, defaults);
 

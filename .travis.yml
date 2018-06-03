@@ -54,6 +54,24 @@ matrix:
         - PLATFORM_VERS=6.0
         - PACKAGE_EXT=apk
         - CACHE_NAME=a25c7
+    - os: linux
+      dist: precise
+      sudo: false
+      language: android
+      jdk: oraclejdk8
+      android:
+        components:
+          - tools
+          - tools
+          - platform-tools
+          - android-27
+          - build-tools-27.0.3
+      env: 
+        - CORDOVA_VERS=8
+        - PLATFORM=android
+        - PLATFORM_VERS=7.1
+        - PACKAGE_EXT=apk
+        - CACHE_NAME=a27c8
     - os: osx
       osx_image: xcode7.3
       language: objective-c
@@ -81,6 +99,15 @@ matrix:
         - PLATFORM_VERS=10.3
         - PACKAGE_EXT=zip
         - CACHE_NAME=i10c7
+    - os: osx
+      osx_image: xcode9.3
+      language: objective-c
+      env:
+        - CORDOVA_VERS=8
+        - PLATFORM=ios
+        - PLATFORM_VERS=11.3
+        - PACKAGE_EXT=zip
+        - CACHE_NAME=i11c8
   exclude:
     - env: PLATFORM=none
 

@@ -1,13 +1,13 @@
 matrix:
   include:
-    - os: linux
+    - &linux
+      os: linux
       dist: precise
       sudo: false
       language: android
       jdk: oraclejdk8
       android:
         components:
-          - tools
           - tools
           - platform-tools
           - android-22
@@ -15,17 +15,22 @@ matrix:
       env: 
         - CORDOVA_VERS=5
         - PLATFORM=android
-        - PLATFORM_VERS=5.0
+        - PLATFORM_VERS=4.4
         - PACKAGE_EXT=apk
         - CACHE_NAME=a22c5
-    - os: linux
-      dist: precise
-      sudo: false
-      language: android
-      jdk: oraclejdk8
+    - &macosx
+      os: osx
+      osx_image: xcode7.3
+      language: objective-c
+      env:
+        - CORDOVA_VERS=5
+        - PLATFORM=ios
+        - PLATFORM_VERS=9.3
+        - PACKAGE_EXT=zip
+        - CACHE_NAME=i9c5
+    - <<: *linux
       android:
         components:
-          - tools
           - tools
           - platform-tools
           - android-25
@@ -36,14 +41,16 @@ matrix:
         - PLATFORM_VERS=5.1
         - PACKAGE_EXT=apk
         - CACHE_NAME=a25c6
-    - os: linux
-      dist: precise
-      sudo: false
-      language: android
-      jdk: oraclejdk8
+    - <<: *macosx
+      env:
+        - CORDOVA_VERS=6
+        - PLATFORM=ios
+        - PLATFORM_VERS=9.3
+        - PACKAGE_EXT=zip
+        - CACHE_NAME=i9c6
+    - <<: *linux
       android:
         components:
-          - tools
           - tools
           - platform-tools
           - android-26
@@ -54,14 +61,17 @@ matrix:
         - PLATFORM_VERS=6.0
         - PACKAGE_EXT=apk
         - CACHE_NAME=a25c7
-    - os: linux
-      dist: precise
-      sudo: false
-      language: android
-      jdk: oraclejdk8
+    - <<: *macosx
+      osx_image: xcode8.3
+      env:
+        - CORDOVA_VERS=7
+        - PLATFORM=ios
+        - PLATFORM_VERS=10.3
+        - PACKAGE_EXT=zip
+        - CACHE_NAME=i10c7
+    - <<: *linux
       android:
         components:
-          - tools
           - tools
           - platform-tools
           - android-26
@@ -72,36 +82,8 @@ matrix:
         - PLATFORM_VERS=7.1
         - PACKAGE_EXT=apk
         - CACHE_NAME=a26c8
-    - os: osx
-      osx_image: xcode7.3
-      language: objective-c
-      env:
-        - CORDOVA_VERS=5
-        - PLATFORM=ios
-        - PLATFORM_VERS=9.3
-        - PACKAGE_EXT=zip
-        - CACHE_NAME=i9c5
-    - os: osx
-      osx_image: xcode7.3
-      language: objective-c
-      env:
-        - CORDOVA_VERS=6
-        - PLATFORM=ios
-        - PLATFORM_VERS=9.3
-        - PACKAGE_EXT=zip
-        - CACHE_NAME=i9c6
-    - os: osx
-      osx_image: xcode8.3
-      language: objective-c
-      env:
-        - CORDOVA_VERS=7
-        - PLATFORM=ios
-        - PLATFORM_VERS=10.3
-        - PACKAGE_EXT=zip
-        - CACHE_NAME=i10c7
-    - os: osx
+    - <<: *macosx
       osx_image: xcode9.3
-      language: objective-c
       env:
         - CORDOVA_VERS=8
         - PLATFORM=ios
@@ -112,6 +94,8 @@ matrix:
     - env: PLATFORM=none
 
 env:
+  global:
+    - ANTITAMPERING_TEST_DIR=$HOME/tests/hello
   matrix:
     - PLATFORM=none
 
@@ -122,6 +106,14 @@ branches:
 addons:
   sauce_connect: true
 
+cache:
+  directories:
+    - $HOME/.m2
+    - $HOME/.gradle/caches/
+    - $HOME/.gradle/wrapper/
+    - $HOME/.android/build-cache
+    - node_modules
+
 before_cache:
   - rm -f $HOME/.gradle/caches/modules-2/modules-2.lock
   - rm -f $HOME/.gradle/caches/*/jarSnapshots/jarSnapshots.bin
@@ -131,14 +123,6 @@ before_cache:
   - rm -f $HOME/.gradle/caches/*/classAnalysis/classAnalysis.lock
   - rm -f $HOME/.gradle/caches/*/classAnalysis/cache.properties*
   - rm -rf $HOME/.gradle/caches/*/plugin-resolution/
-
-cache:
-  directories:
-    - $HOME/.m2
-    - $HOME/.gradle/caches/
-    - $HOME/.gradle/wrapper/
-    - $HOME/.android/build-cache
-    - node_modules
 
 before_install:
   - nvm install node
@@ -152,7 +136,6 @@ before_script:
   - npm run lint
 
 script:
-  - export ANTITAMPERING_TEST_DIR=$HOME/tests/hello
   - mkdir -p $ANTITAMPERING_TEST_DIR
   - cordova create $ANTITAMPERING_TEST_DIR com.example.hello HelloWorld
   - cd $ANTITAMPERING_TEST_DIR
@@ -163,5 +146,7 @@ script:
   - cordova compile --debug $PLATFORM -verbose
   - cd $TRAVIS_BUILD_DIR
   - npm run tamper-$PLATFORM
-  - curl -u $SAUCE_USERNAME:$SAUCE_ACCESS_KEY -X POST -H "Content-Type:application/octet-stream" https://saucelabs.com/rest/v1/storage/duddu/$TRAVIS_JOB_ID-$PLATFORM.$PACKAGE_EXT?overwrite=true --data-binary @$TRAVIS_BUILD_DIR/tests/$PLATFORM-tampered.$PACKAGE_EXT
+  - curl -u $SAUCE_USERNAME:$SAUCE_ACCESS_KEY -X POST -H "Content-Type:application/octet-stream"
+      https://saucelabs.com/rest/v1/storage/duddu/$TRAVIS_JOB_ID-$PLATFORM.$PACKAGE_EXT?overwrite=true
+      --data-binary @$TRAVIS_BUILD_DIR/tests/$PLATFORM-tampered.$PACKAGE_EXT
   - npm run appium-$PLATFORM

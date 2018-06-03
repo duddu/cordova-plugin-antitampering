@@ -13,7 +13,7 @@ matrix:
           - android-22
           - build-tools-25.0.2
       env: 
-        - CORDOVA_VERS=5.4.1
+        - CORDOVA_VERS=5
         - PLATFORM=android
         - PLATFORM_VERS=5.0
         - PACKAGE_EXT=apk
@@ -31,7 +31,7 @@ matrix:
           - android-25
           - build-tools-25.0.2
       env: 
-        - CORDOVA_VERS=6.5.0
+        - CORDOVA_VERS=6
         - PLATFORM=android
         - PLATFORM_VERS=5.1
         - PACKAGE_EXT=apk
@@ -49,7 +49,7 @@ matrix:
           - android-26
           - build-tools-26.0.2
       env: 
-        - CORDOVA_VERS=7.1.0
+        - CORDOVA_VERS=7
         - PLATFORM=android
         - PLATFORM_VERS=6.0
         - PACKAGE_EXT=apk
@@ -58,7 +58,7 @@ matrix:
       osx_image: xcode7.3
       language: objective-c
       env:
-        - CORDOVA_VERS=5.4.1
+        - CORDOVA_VERS=5
         - PLATFORM=ios
         - PLATFORM_VERS=9.3
         - PACKAGE_EXT=zip
@@ -67,7 +67,7 @@ matrix:
       osx_image: xcode7.3
       language: objective-c
       env:
-        - CORDOVA_VERS=6.5.0
+        - CORDOVA_VERS=6
         - PLATFORM=ios
         - PLATFORM_VERS=9.3
         - PACKAGE_EXT=zip
@@ -76,7 +76,7 @@ matrix:
       osx_image: xcode7.3
       language: objective-c
       env:
-        - CORDOVA_VERS=7.1.0
+        - CORDOVA_VERS=7
         - PLATFORM=ios
         - PLATFORM_VERS=10.3
         - PACKAGE_EXT=zip

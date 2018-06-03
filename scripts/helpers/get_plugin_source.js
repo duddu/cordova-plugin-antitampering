@@ -13,12 +13,17 @@ module.exports = function (platform) {
     if (platform === 'android') {
         var isHandlingPreferences = this.scriptLocation.indexOf('handle_plugin_preferences') > -1;
         var fileBasename = isHandlingPreferences ? 'AntiTamperingPlugin' : 'AssetsIntegrity';
-        pluginDir = path.join(platformPath, 'src');
-        sourceFile = path.join(pluginDir, 'com/duddu/antitampering/' + fileBasename + '.java');
+        var filePath = 'com/duddu/antitampering/' + fileBasename + '.java';
         try {
+            sourceFile = path.join(platformPath, 'app/src/main/java', filePath);
             content = fs.readFileSync(sourceFile, 'utf-8');
-        } catch (e) {
-            helpers.exit('Unable to read java class source at path ' + sourceFile, e);
+        } catch (_e) {
+            try {
+                sourceFile = path.join(platformPath, 'src', filePath);
+                content = fs.readFileSync(sourceFile, 'utf-8');
+            } catch (e) {
+                helpers.exit('Unable to read java class source at path ' + sourceFile, e);
+            }
         }
     }
 

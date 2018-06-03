@@ -8,17 +8,21 @@ var JSZip = require('jszip');
 
 var apk;
 var indexAsset = 'assets/www/index.html';
-var basePath = path.join(process.env.TRAVIS_BUILD_DIR, 'tests');
-var originalApkPath = path.join(basePath, 'hello/platforms/android/build/outputs/apk/android-debug.apk');
-var tamperedApkPath = path.join(basePath, 'android-tampered.apk');
+var platformPath = path.join(process.env.ANTITAMPERING_TEST_DIR, 'platforms/android');
+var tamperedApkPath = path.join(process.env.TRAVIS_BUILD_DIR, 'tests/android-tampered.apk');
 
 new JSZip.external.Promise(function (resolve, reject) {
-    var build = originalApkPath;
-    fs.readFile(build, function (err, data) {
-        if (err) {
-            reject(err);
+    fs.readFile(path.join(platformPath, 'app/build/outputs/apk/debug/app-debug.apk'), function (_err, _data) {
+        if (!_err) {
+            resolve(_data);
         } else {
-            resolve(data);
+            fs.readFile(path.join(platformPath, 'build/outputs/apk/android-debug.apk'), function (err, data) {
+                if (!err) {
+                    resolve(data);
+                } else {
+                    reject(err);
+                }
+            });
         }
     });
 })

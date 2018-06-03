@@ -57,9 +57,8 @@ module.exports = function (context) {
         var platformApi = platforms.getPlatformApi(platform, platformPath);
         var platformInfo = platformApi.getPlatformInfo();
         var platformWww = platformInfo.locations.www;
-        var pluginDir;
-        var sourceFile;
-        var content;
+        var source = helpers.getPluginSource(context, platform);
+        var content = source.content;
 
         var hashes = getPlatformAssets(platformWww).map(function (file) {
             var fileName = file.replace(/\\/g, '/');
@@ -70,7 +69,7 @@ module.exports = function (context) {
             try {
                 hash.update(fs.readFileSync(file), 'utf8');
             } catch (e) {
-                exit('Unable to read file at path ' + file, e);
+                helpers.exit('Unable to read file at path ' + file, e);
             }
             hashHex = hash.digest('hex');
             if (helpers.isVerbose(context)) {
@@ -83,14 +82,6 @@ module.exports = function (context) {
         });
 
         if (platform === 'android') {
-            pluginDir = path.join(platformPath, 'src');
-            sourceFile = path.join(pluginDir, 'com/duddu/antitampering/AssetsIntegrity.java');
-            try {
-                content = fs.readFileSync(sourceFile, 'utf-8');
-            } catch (e) {
-                exit('Unable to read java class source at path ' + sourceFile, e);
-            }
-
             content = content.replace(/\s*put\("[^"]+",\s"[^"]{64}"\);/g, '')
                 .replace(/assetsHashes\s*=.+\s*new.*(\(\d+\)[^\w]*)\);/, function (match, group) {
                     return match.replace(group, '()\n' + tab());
@@ -108,23 +99,13 @@ module.exports = function (context) {
                 });
 
             try {
-                fs.writeFileSync(sourceFile, content, 'utf-8');
+                fs.writeFileSync(source.path, content, 'utf-8');
             } catch (e) {
-                exit('Unable to write java class source at path ' + sourceFile, e);
+                helpers.exit('Unable to write java class source at path ' + source.path, e);
             }
         }
 
         if (platform === 'ios') {
-            var IosParser = context.requireCordovaModule('cordova-lib/src/cordova/metadata/ios_parser');
-            var iosParser = new IosParser(platformPath);
-            pluginDir = path.join(iosParser.cordovaproj, 'Plugins', context.opts.plugin.id);
-            sourceFile = path.join(pluginDir, 'AntiTamperingPlugin.m');
-            try {
-                content = fs.readFileSync(sourceFile, 'utf-8');
-            } catch (e) {
-                exit('Unable to read obj-c source at path ' + sourceFile, e);
-            }
-
             content = content.replace(/assetsHashes = (@{([^}]*)});/, function (a, b) {
                 var list = '@{\n' + tab();
                 hashes.forEach(function (h) {
@@ -135,9 +116,9 @@ module.exports = function (context) {
             });
 
             try {
-                fs.writeFileSync(sourceFile, content, 'utf-8');
+                fs.writeFileSync(source.path, content, 'utf-8');
             } catch (e) {
-                exit('Unable to write obj c source at path ' + sourceFile, e);
+                helpers.exit('Unable to write obj-c source at path ' + source.path, e);
             }
         }
     });
@@ -148,10 +129,5 @@ module.exports = function (context) {
             str += '    ';
         }
         return str;
-    }
-
-    function exit (msg, exception) {
-        process.stdout.write('\n[ANTI-TAMPERING] ERROR! ' + msg + '\n');
-        throw new Error(exception);
     }
 };

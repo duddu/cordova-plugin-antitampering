@@ -1,6 +1,7 @@
 matrix:
   include:
-    - os: linux
+    - &linux
+      os: linux
       dist: precise
       sudo: false
       language: android
@@ -8,27 +9,93 @@ matrix:
       android:
         components:
           - tools
+          - platform-tools
+          - android-22
+          - build-tools-25.0.2
+      env: 
+        - CORDOVA_VERS=5
+        - PLATFORM=android
+        - PLATFORM_VERS=4.4
+        - PACKAGE_EXT=apk
+        - CACHE_NAME=a22c5
+    - &macosx
+      os: osx
+      osx_image: xcode7.3
+      language: objective-c
+      env:
+        - CORDOVA_VERS=5
+        - PLATFORM=ios
+        - PLATFORM_VERS=9.3
+        - PACKAGE_EXT=zip
+        - CACHE_NAME=i9c5
+    - <<: *linux
+      android:
+        components:
           - tools
           - platform-tools
           - android-25
           - build-tools-25.0.2
       env: 
+        - CORDOVA_VERS=6
         - PLATFORM=android
-        - PLATFORM_VERS=5.0
+        - PLATFORM_VERS=5.1
         - PACKAGE_EXT=apk
-        - CACHE_NAME=android5
-    - os: osx
-      osx_image: xcode7.3
-      language: objective-c
+        - CACHE_NAME=a25c6
+    - <<: *macosx
       env:
+        - CORDOVA_VERS=6
         - PLATFORM=ios
         - PLATFORM_VERS=9.3
         - PACKAGE_EXT=zip
-        - CACHE_NAME=ios9
+        - CACHE_NAME=i9c6
+    - <<: *linux
+      android:
+        components:
+          - tools
+          - platform-tools
+          - android-26
+          - build-tools-26.0.2
+      env: 
+        - CORDOVA_VERS=7
+        - PLATFORM=android
+        - PLATFORM_VERS=6.0
+        - PACKAGE_EXT=apk
+        - CACHE_NAME=a25c7
+    - <<: *macosx
+      osx_image: xcode8.3
+      env:
+        - CORDOVA_VERS=7
+        - PLATFORM=ios
+        - PLATFORM_VERS=10.3
+        - PACKAGE_EXT=zip
+        - CACHE_NAME=i10c7
+    - <<: *linux
+      android:
+        components:
+          - tools
+          - platform-tools
+          - android-26
+          - build-tools-27.0.3
+      env: 
+        - CORDOVA_VERS=8
+        - PLATFORM=android
+        - PLATFORM_VERS=7.1
+        - PACKAGE_EXT=apk
+        - CACHE_NAME=a26c8
+    - <<: *macosx
+      osx_image: xcode9.3
+      env:
+        - CORDOVA_VERS=8
+        - PLATFORM=ios
+        - PLATFORM_VERS=11.3
+        - PACKAGE_EXT=zip
+        - CACHE_NAME=i11c8
   exclude:
     - env: PLATFORM=none
 
 env:
+  global:
+    - ANTITAMPERING_TEST_DIR=$HOME/tests/hello
   matrix:
     - PLATFORM=none
 
@@ -39,14 +106,6 @@ branches:
 addons:
   sauce_connect: true
 
-before_cache:
-  - rm -f $HOME/.gradle/caches/modules-2/modules-2.lock
-  - rm -f $HOME/.gradle/caches/*/jarSnapshots/jarSnapshots.bin
-  - rm -f $HOME/.gradle/caches/*/jarSnapshots/cache.properties*
-  - rm -f $HOME/.gradle/caches/*/classAnalysis/classAnalysis.bin
-  - rm -f $HOME/.gradle/caches/*/classAnalysis/cache.properties*
-  - rm -rf $HOME/.gradle/caches/*/plugin-resolution/
-
 cache:
   directories:
     - $HOME/.m2
@@ -55,24 +114,41 @@ cache:
     - $HOME/.android/build-cache
     - node_modules
 
+before_cache:
+  - rm -f $HOME/.gradle/caches/modules-2/modules-2.lock
+  - rm -f $HOME/.gradle/caches/*/jarSnapshots/jarSnapshots.bin
+  - rm -f $HOME/.gradle/caches/*/jarSnapshots/jarSnapshots.lock
+  - rm -f $HOME/.gradle/caches/*/jarSnapshots/cache.properties*
+  - rm -f $HOME/.gradle/caches/*/fileHashes/fileHashes.bin
+  - rm -f $HOME/.gradle/caches/*/fileHashes/fileHashes.lock
+  - rm -f $HOME/.gradle/caches/*/classAnalysis/classAnalysis.bin
+  - rm -f $HOME/.gradle/caches/*/classAnalysis/classAnalysis.lock
+  - rm -f $HOME/.gradle/caches/*/classAnalysis/cache.properties*
+  - rm -rf $HOME/.gradle/caches/*/plugin-resolution/
+
 before_install:
   - nvm install node
 
 install:
-  - npm install -g cordova
+  - npm install -g npm@latest
+  - npm install -g cordova@$CORDOVA_VERS
   - npm install
 
 before_script:
   - npm run lint
 
 script:
-  - cordova create tests/hello com.example.hello HelloWorld
-  - cd tests/hello
+  - mkdir -p $ANTITAMPERING_TEST_DIR
+  - cordova create $ANTITAMPERING_TEST_DIR com.example.hello HelloWorld
+  - cd $ANTITAMPERING_TEST_DIR
   - cordova platform add $PLATFORM --save
-  - cordova plugin add ../../ --variable ENABLE_CORDOVA_CALLBACK=true --save
+  - cordova plugin add $TRAVIS_BUILD_DIR --variable ENABLE_CORDOVA_CALLBACK=true --save
   - cordova plugin list
   - cordova prepare -verbose
   - cordova compile --debug $PLATFORM -verbose
+  - cd $TRAVIS_BUILD_DIR
   - npm run tamper-$PLATFORM
-  - curl -u $SAUCE_USERNAME:$SAUCE_ACCESS_KEY -X POST -H "Content-Type:application/octet-stream" https://saucelabs.com/rest/v1/storage/duddu/$TRAVIS_JOB_ID-$PLATFORM.$PACKAGE_EXT?overwrite=true --data-binary @$TRAVIS_BUILD_DIR/tests/$PLATFORM-tampered.$PACKAGE_EXT
+  - curl -u $SAUCE_USERNAME:$SAUCE_ACCESS_KEY -X POST -H "Content-Type:application/octet-stream"
+      https://saucelabs.com/rest/v1/storage/duddu/$TRAVIS_JOB_ID-$PLATFORM.$PACKAGE_EXT?overwrite=true
+      --data-binary @$TRAVIS_BUILD_DIR/tests/$PLATFORM-tampered.$PACKAGE_EXT
   - npm run appium-$PLATFORM

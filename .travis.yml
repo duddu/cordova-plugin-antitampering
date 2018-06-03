@@ -98,8 +98,10 @@ addons:
 before_cache:
   - rm -f $HOME/.gradle/caches/modules-2/modules-2.lock
   - rm -f $HOME/.gradle/caches/*/jarSnapshots/jarSnapshots.bin
+  - rm -f $HOME/.gradle/caches/3.3/jarSnapshots/jarSnapshots.lock
   - rm -f $HOME/.gradle/caches/*/jarSnapshots/cache.properties*
   - rm -f $HOME/.gradle/caches/*/classAnalysis/classAnalysis.bin
+  - rm -f $HOME/.gradle/caches/*/classAnalysis/classAnalysis.lock
   - rm -f $HOME/.gradle/caches/*/classAnalysis/cache.properties*
   - rm -rf $HOME/.gradle/caches/*/plugin-resolution/
 

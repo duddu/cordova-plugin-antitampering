@@ -7,15 +7,13 @@ module.exports = function (platform) {
     var projectRoot = cordovaUtil.isCordova();
     var platformPath = path.join(projectRoot, 'platforms', platform);
     var pluginDir;
-    var isHandlingPreferences;
-    var fileBasename;
     var sourceFile;
     var content;
 
     if (platform === 'android') {
+        var isHandlingPreferences = this.scriptLocation.indexOf('handle_plugin_preferences') > -1;
+        var fileBasename = isHandlingPreferences ? 'AntiTamperingPlugin' : 'AssetsIntegrity';
         pluginDir = path.join(platformPath, 'src');
-        isHandlingPreferences = this.scriptLocation.indexOf('handle_plugin_preferences') > -1;
-        fileBasename = isHandlingPreferences ? 'AntiTamperingPlugin' : 'AssetsIntegrity';
         sourceFile = path.join(pluginDir, 'com/duddu/antitampering/' + fileBasename + '.java');
         try {
             content = fs.readFileSync(sourceFile, 'utf-8');
@@ -25,23 +23,17 @@ module.exports = function (platform) {
     }
 
     if (platform === 'ios') {
+        var projectName;
         try {
+            var IosPlatformApi = require(path.join(platformPath, 'cordova/Api'));
+            var locations = (new IosPlatformApi()).locations;
+            projectName = locations.xcodeCordovaProj;
+        } catch (e) {
             var IosParser = this.requireCordovaModule('cordova-lib/src/cordova/metadata/ios_parser');
             var iosParser = new IosParser(platformPath);
-            pluginDir = path.join(iosParser.cordovaproj, 'Plugins', this.opts.plugin.id);
-
-            process.stdout.write('\n[ANTI-TAMPERING] pluginDir: ' + pluginDir + '\n');
-        } catch (e) {
-            //
+            projectName = iosParser.cordovaproj;
         }
-        var IosPlatformApi = require(path.join(platformPath, '/cordova/Api'));
-        var locations = (new IosPlatformApi()).locations;
-        process.stdout.write('\n[ANTI-TAMPERING] locations.xcodeProjDir: ' + locations.xcodeProjDir + '\n');
-        process.stdout.write('\n[ANTI-TAMPERING] locations.xcodeCordovaProj: ' + locations.xcodeCordovaProj + '\n');
-
-        pluginDir = path.join(locations.xcodeCordovaProj, 'Plugins', this.opts.plugin.id);
-        process.stdout.write('\n[ANTI-TAMPERING] pluginDir hard: ' + pluginDir + '\n');
-
+        pluginDir = path.join(projectName, 'Plugins', this.opts.plugin.id);
         sourceFile = path.join(pluginDir, 'AntiTamperingPlugin.m');
         try {
             content = fs.readFileSync(sourceFile, 'utf-8');

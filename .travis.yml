@@ -152,15 +152,16 @@ before_script:
   - npm run lint
 
 script:
-  - mkdir -p tests/hello
-  - cordova create tests/hello com.example.hello HelloWorld
-  - cd tests/hello
+  - export ANTITAMPERING_TEST_DIR=$HOME/tests/hello
+  - mkdir -p $ANTITAMPERING_TEST_DIR
+  - cordova create $ANTITAMPERING_TEST_DIR com.example.hello HelloWorld
+  - cd $ANTITAMPERING_TEST_DIR
   - cordova platform add $PLATFORM --save
-  - cordova plugin add https://github.com/$TRAVIS_REPO_SLUG#$TRAVIS_COMMIT --variable ENABLE_CORDOVA_CALLBACK=true --save
+  - cordova plugin add $TRAVIS_BUILD_DIR --variable ENABLE_CORDOVA_CALLBACK=true --save
   - cordova plugin list
   - cordova prepare -verbose
   - cordova compile --debug $PLATFORM -verbose
-  - cd ../..
+  - cd $TRAVIS_BUILD_DIR
   - npm run tamper-$PLATFORM
   - curl -u $SAUCE_USERNAME:$SAUCE_ACCESS_KEY -X POST -H "Content-Type:application/octet-stream" https://saucelabs.com/rest/v1/storage/duddu/$TRAVIS_JOB_ID-$PLATFORM.$PACKAGE_EXT?overwrite=true --data-binary @$TRAVIS_BUILD_DIR/tests/$PLATFORM-tampered.$PACKAGE_EXT
   - npm run appium-$PLATFORM

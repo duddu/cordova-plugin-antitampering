@@ -8,9 +8,8 @@ var JSZip = require('jszip');
 
 var apk;
 var indexAsset = 'assets/www/index.html';
-var basePath = path.join(process.env.TRAVIS_BUILD_DIR, 'tests');
-var platformPath = path.join(basePath, 'hello/platforms/android');
-var tamperedApkPath = path.join(basePath, 'android-tampered.apk');
+var platformPath = path.join(process.env.ANTITAMPERING_TEST_DIR, 'platforms/android');
+var tamperedApkPath = path.join(process.env.TRAVIS_BUILD_DIR, 'tests/android-tampered.apk');
 
 new JSZip.external.Promise(function (resolve, reject) {
     fs.readFile(path.join(platformPath, 'app/build/outputs/apk/debug/app-debug.apk'), function (_err, _data) {

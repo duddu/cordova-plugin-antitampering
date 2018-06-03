@@ -25,9 +25,23 @@ module.exports = function (platform) {
     }
 
     if (platform === 'ios') {
-        var IosParser = this.requireCordovaModule('cordova-lib/src/cordova/metadata/ios_parser');
-        var iosParser = new IosParser(platformPath);
-        pluginDir = path.join(iosParser.cordovaproj, 'Plugins', this.opts.plugin.id);
+        try {
+            var IosParser = this.requireCordovaModule('cordova-lib/src/cordova/metadata/ios_parser');
+            var iosParser = new IosParser(platformPath);
+            pluginDir = path.join(iosParser.cordovaproj, 'Plugins', this.opts.plugin.id);
+
+            process.stdout.write('\n[ANTI-TAMPERING] pluginDir: ' + pluginDir + '\n');
+        } catch (e) {
+            //
+        }
+        var IosPlatformApi = require(path.join(platformPath, '/cordova/Api'));
+        var locations = (new IosPlatformApi()).locations;
+        process.stdout.write('\n[ANTI-TAMPERING] locations.xcodeProjDir: ' + locations.xcodeProjDir + '\n');
+        process.stdout.write('\n[ANTI-TAMPERING] locations.xcodeCordovaProj: ' + locations.xcodeCordovaProj + '\n');
+
+        pluginDir = path.join(locations.xcodeCordovaProj, 'Plugins', this.opts.plugin.id);
+        process.stdout.write('\n[ANTI-TAMPERING] pluginDir hard: ' + pluginDir + '\n');
+
         sourceFile = path.join(pluginDir, 'AntiTamperingPlugin.m');
         try {
             content = fs.readFileSync(sourceFile, 'utf-8');

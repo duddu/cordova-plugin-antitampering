@@ -1,10 +1,10 @@
 'use strict';
 
-/* eslint no-process-env: 0 */
+/* eslint no-process-env: 0, max-len: 0 */
 
 var defaults = {
     browserName: '',
-    appiumVersion: '1.5.3',
+    appiumVersion: process.env.PLATFORM === 'ios' && Number(process.env.PLATFORM_VERS) < 10 ? '1.7.1' : '1.8.1',
     deviceOrientation: 'portrait',
     platformVersion: process.env.PLATFORM_VERS,
     app: 'sauce-storage:' + process.env.TRAVIS_JOB_ID + '-' + process.env.PLATFORM + '.' + process.env.PACKAGE_EXT,
@@ -14,7 +14,7 @@ var defaults = {
 };
 
 exports.android = Object.assign({
-    deviceName: 'Android Emulator',
+    deviceName: process.env.PLATFORM === 'android' && Number(process.env.PLATFORM_VERS) > 6 ? 'Android GoogleAPI Emulator' : 'Android Emulator',
     platformName: 'Android'
 }, defaults);
 

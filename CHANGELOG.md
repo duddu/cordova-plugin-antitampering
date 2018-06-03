@@ -1,5 +1,10 @@
 # Changelog
 
+## v0.3.0
+
+- Fix plugin support for Cordova 7 and 8
+- CI: added multiple tests for major Cordova versions on both iOS and Android
+
 ## v0.2.2
 
 - Added some helpers functions for hooks scripts

@@ -2,7 +2,7 @@
 <plugin xmlns="http://apache.org/cordova/ns/plugins/1.0"
     xmlns:android="http://schemas.android.com/apk/res/android"
     id="cordova-plugin-antitampering"
-    version="0.2.2">
+    version="0.3.0">
     <name>Anti-Tampering</name>
     <description>Verify the integrity of cordova static assets - Android / iOS</description>
     <author>Davide Doronzo</author>

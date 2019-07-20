@@ -2,6 +2,6 @@
 
 exports.getWebView = function (driver) {
     return driver.contexts().then(function (contexts) {
-        return driver.context(contexts[1]);
+        return driver.context(contexts[0]);
     });
 };

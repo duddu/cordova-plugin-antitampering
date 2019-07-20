@@ -11,7 +11,8 @@ matrix:
           - platform-tools
           - android-22
           - build-tools-25.0.2
-      env: 
+      env:
+        - NODE_VERS=8
         - CORDOVA_VERS=5
         - PLATFORM=android
         - PLATFORM_VERS=5.1
@@ -22,6 +23,7 @@ matrix:
       language: objective-c
       osx_image: xcode8.3
       env:
+        - NODE_VERS=8
         - CORDOVA_VERS=5
         - PLATFORM=ios
         - PLATFORM_VERS=10.3
@@ -35,6 +37,7 @@ matrix:
           - android-25
           - build-tools-25.0.2
       env: 
+        - NODE_VERS=8
         - CORDOVA_VERS=6
         - PLATFORM=android
         - PLATFORM_VERS=5.1
@@ -43,6 +46,7 @@ matrix:
     - <<: *macosx
       osx_image: xcode9.4
       env:
+        - NODE_VERS=8
         - CORDOVA_VERS=6
         - PLATFORM=ios
         - PLATFORM_VERS=10.3
@@ -56,6 +60,7 @@ matrix:
           - android-26
           - build-tools-26.0.2
       env: 
+        - NODE_VERS=10
         - CORDOVA_VERS=7
         - PLATFORM=android
         - PLATFORM_VERS=6.0
@@ -64,6 +69,7 @@ matrix:
     - <<: *macosx
       osx_image: xcode10.2
       env:
+        - NODE_VERS=10
         - CORDOVA_VERS=7
         - PLATFORM=ios
         - PLATFORM_VERS=11.3
@@ -77,6 +83,7 @@ matrix:
           - android-27
           - build-tools-27.0.3
       env: 
+        - NODE_VERS=10
         - CORDOVA_VERS=8
         - PLATFORM=android
         - PLATFORM_VERS=8.0
@@ -85,6 +92,7 @@ matrix:
     - <<: *macosx
       osx_image: xcode10.2
       env:
+        - NODE_VERS=10
         - CORDOVA_VERS=8
         - PLATFORM=ios
         - PLATFORM_VERS=12.2
@@ -127,7 +135,7 @@ before_cache:
   - rm -rf $HOME/.gradle/caches/*/plugin-resolution/
 
 before_install:
-  - nvm install 8
+  - nvm install $NODE_VERS
 
 install:
   - npm install -g npm@latest

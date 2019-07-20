@@ -8,7 +8,7 @@ var path = require('path');
 var buildPath = path.join(process.env.ANTITAMPERING_TEST_DIR, 'platforms/ios');
 try {
     buildPath = path.join(buildPath);
-    fs.statSync(buildPath).isDirectory();
+    fs.statSync(path.join(buildPath, 'www')).isDirectory();
 } catch (e) {
     buildPath = path.join(buildPath, 'build/emulator/HelloWorld.app');
 }

@@ -104,4 +104,4 @@ Any suggestions, remarks, or pull requests are welcome!
 
 If you want to contribute: fork the repo, create a new branch, and submit a PR *to the develop branch* of this repo. I will merge into develop, and then into master on the next release tag.
 
-The plugin is tested (thanks to Travis CI) on Cordova versions from 5 to 8, on both Android and iOS platforms.
+The plugin is tested (thanks to Travis CI) on **Cordova versions from 5 to 9**, on both Android and iOS platforms.

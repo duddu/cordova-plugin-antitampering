@@ -106,7 +106,7 @@ matrix:
           - android-28
           - build-tools-28.0.3
       env: 
-        - NODE_VERS=10
+        - NODE_VERS=12
         - CORDOVA_VERS=9
         - PLATFORM=android
         - PLATFORM_VERS=8.0
@@ -115,7 +115,7 @@ matrix:
     - <<: *macosx
       osx_image: xcode9.4
       env:
-        - NODE_VERS=10
+        - NODE_VERS=12
         - CORDOVA_VERS=9
         - PLATFORM=ios
         - PLATFORM_VERS=12.2

@@ -28,7 +28,6 @@ matrix:
         - PACKAGE_EXT=zip
         - CACHE_NAME=i10c5
     - <<: *linux
-      jdk: oraclejdk8
       android:
         components:
           - tools
@@ -50,7 +49,6 @@ matrix:
         - PACKAGE_EXT=zip
         - CACHE_NAME=i10c6
     - <<: *linux
-      jdk: oraclejdk9
       android:
         components:
           - tools
@@ -72,7 +70,6 @@ matrix:
         - PACKAGE_EXT=zip
         - CACHE_NAME=i11c7
     - <<: *linux
-      jdk: oraclejdk9
       android:
         components:
           - tools

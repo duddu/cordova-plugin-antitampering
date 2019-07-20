@@ -46,13 +46,13 @@ describe('AntiTampering Plugin Test - iOS', function () {
     it('The Hello World cordova app should load successfully', function () {
         return driver
             .title()
-                .should.eventually.equal('Hello World');
+            .should.eventually.equal('Hello World');
     });
 
     it('The file index.html should have been actually tampered with', function () {
         return driver
             .waitForElementById('tampering')
-                .should.eventually.exist;
+            .should.eventually.exist;
     });
 
     it('The plugin should be able to detect tampering on index.html', function () {
@@ -66,6 +66,6 @@ describe('AntiTampering Plugin Test - iOS', function () {
                 });
             }, [])
             .waitFor(wd.asserters.jsCondition('__tamperingTestResult'), 20000, 1000)
-                .should.eventually.contain('match for file index.html');
+            .should.eventually.contain('match for file index.html');
     });
 });

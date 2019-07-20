@@ -15,7 +15,7 @@ matrix:
       env: 
         - CORDOVA_VERS=5
         - PLATFORM=android
-        - PLATFORM_VERS=4.4
+        - PLATFORM_VERS=5.1
         - PACKAGE_EXT=apk
         - CACHE_NAME=a22c5
     - &macosx

@@ -40,9 +40,9 @@ matrix:
         - NODE_VERS=8
         - CORDOVA_VERS=6
         - PLATFORM=android
-        - PLATFORM_VERS=5.1
+        - PLATFORM_VERS=6.0
         - PACKAGE_EXT=apk
-        - CACHE_NAME=a5c6
+        - CACHE_NAME=a6c6
     - <<: *macosx
       osx_image: xcode9.4
       env:
@@ -63,9 +63,9 @@ matrix:
         - NODE_VERS=10
         - CORDOVA_VERS=7
         - PLATFORM=android
-        - PLATFORM_VERS=6.0
+        - PLATFORM_VERS=7.1
         - PACKAGE_EXT=apk
-        - CACHE_NAME=a6c7
+        - CACHE_NAME=a7c7
     - <<: *macosx
       osx_image: xcode9.4
       env:
@@ -86,7 +86,7 @@ matrix:
         - NODE_VERS=10
         - CORDOVA_VERS=8
         - PLATFORM=android
-        - PLATFORM_VERS=8.0
+        - PLATFORM_VERS=8.1
         - PACKAGE_EXT=apk
         - CACHE_NAME=a8c8
     - <<: *macosx
@@ -109,9 +109,9 @@ matrix:
         - NODE_VERS=12
         - CORDOVA_VERS=9
         - PLATFORM=android
-        - PLATFORM_VERS=8.0
+        - PLATFORM_VERS=9.0
         - PACKAGE_EXT=apk
-        - CACHE_NAME=a8c9
+        - CACHE_NAME=a9c9
     - <<: *macosx
       osx_image: xcode9.4
       env:

@@ -14,7 +14,7 @@ var defaults = {
 };
 
 exports.android = Object.assign({
-    deviceName: process.env.PLATFORM === 'android' && Number(process.env.PLATFORM_VERS) > 6 ? 'Android GoogleAPI Emulator' : 'Android Emulator',
+    deviceName: 'Android GoogleAPI Emulator',
     platformName: 'Android'
 }, defaults);
 

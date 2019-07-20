@@ -4,8 +4,8 @@ var crypto = require('crypto');
 var helpers = require('./helpers');
 
 module.exports = function (context) {
-    var path = context.requireCordovaModule('path');
-    var fs = context.requireCordovaModule('fs');
+    var path = require('path');
+    var fs = require('fs');
     var cordovaUtil = context.requireCordovaModule('cordova-lib/src/cordova/util');
     var platforms = context.requireCordovaModule('cordova-lib/src/platforms/platforms');
     var projectRoot = cordovaUtil.isCordova();
@@ -76,7 +76,7 @@ module.exports = function (context) {
                 process.stdout.write('Hash: ' + hashHex + ' < ' + fileName + '\n');
             }
             return {
-                file: new Buffer(fileName).toString('base64'),
+                file: Buffer.from(fileName).toString('base64'),
                 hash: hashHex
             };
         });

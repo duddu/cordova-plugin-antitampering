@@ -3,7 +3,7 @@
 var helpers = require('./helpers');
 
 module.exports = function (context) {
-    var fs = context.requireCordovaModule('fs');
+    var fs = require('fs');
     var callbackPreference = getPreference('ENABLE_CORDOVA_CALLBACK');
     var debugPreference = getPreference('ENABLE_DEBUG_DETECTION');
 

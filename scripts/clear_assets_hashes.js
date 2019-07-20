@@ -3,7 +3,7 @@
 var helpers = require('./helpers');
 
 module.exports = function (context) {
-    var fs = context.requireCordovaModule('fs');
+    var fs = require('fs');
 
     process.stdout.write('[ANTI-TAMPERING] Clearing assets hash from previous build\n');
 

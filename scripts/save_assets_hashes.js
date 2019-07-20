@@ -76,7 +76,7 @@ module.exports = function (context) {
                 process.stdout.write('Hash: ' + hashHex + ' < ' + fileName + '\n');
             }
             return {
-                file: new Buffer(fileName).toString('base64'),
+                file: Buffer.from(fileName).toString('base64'),
                 hash: hashHex
             };
         });

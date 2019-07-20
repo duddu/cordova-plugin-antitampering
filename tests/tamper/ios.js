@@ -30,6 +30,7 @@ var tamperedContent = content.replace(/<h1>(.+)<\/h1>/, function (match, group) 
 try {
     fs.writeFileSync(indexAsset, tamperedContent, 'utf-8');
     console.log('The original ios build was successfully tampered with.');
+    console.log(buildPath);
 } catch (e) {
     throw new Error('Unable to write over index.html in ios app', e);
 }

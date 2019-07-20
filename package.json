@@ -36,7 +36,7 @@
   "scripts": {
     "lint": "eslint \"+(scripts|tests|www)/**/*.js\"",
     "tamper-android": "node tests/tamper/android.js && jarsigner -verbose -keystore $HOME/.android/debug.keystore -storepass android -keypass android $TRAVIS_BUILD_DIR/tests/android-tampered.apk androiddebugkey",
-    "tamper-ios": "node tests/tamper/ios.js && cd $ANTITAMPERING_TEST_DIR/platforms/ios/build/emulator && zip -r $TRAVIS_BUILD_DIR/tests/ios-tampered.zip HelloWorld.app && cd $TRAVIS_BUILD_DIR",
+    "tamper-ios": "IOS_BUILD_PATH=$(node tests/tamper/ios.js | grep $ANTITAMPERING_TEST_DIR) && zip -rj $TRAVIS_BUILD_DIR/tests/ios-tampered.zip $IOS_BUILD_PATH",
     "appium-android": "mocha tests/appium/android.js",
     "appium-ios": "mocha tests/appium/ios.js"
   }

@@ -1,5 +1,10 @@
 # Changelog
 
+## v0.4.0
+
+- Fix plugin support for Cordova 9
+- CI: added more tests for multiple version of Node and Cordova
+
 ## v0.3.0
 
 - Fix plugin support for Cordova 7 and 8

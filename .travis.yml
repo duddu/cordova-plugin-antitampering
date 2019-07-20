@@ -67,7 +67,7 @@ matrix:
         - PACKAGE_EXT=apk
         - CACHE_NAME=a6c7
     - <<: *macosx
-      osx_image: xcode10.2
+      osx_image: xcode9.4
       env:
         - NODE_VERS=10
         - CORDOVA_VERS=7
@@ -90,7 +90,7 @@ matrix:
         - PACKAGE_EXT=apk
         - CACHE_NAME=a8c8
     - <<: *macosx
-      osx_image: xcode10.2
+      osx_image: xcode9.4
       env:
         - NODE_VERS=10
         - CORDOVA_VERS=8

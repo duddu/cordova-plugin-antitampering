@@ -2,7 +2,7 @@ matrix:
   include:
     - &linux
       os: linux
-      dist: precise
+      # dist: precise
       sudo: false
       language: android
       jdk: oraclejdk8

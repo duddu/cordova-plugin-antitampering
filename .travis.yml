@@ -2,7 +2,6 @@ matrix:
   include:
     - &linux
       os: linux
-      # dist: precise
       sudo: false
       language: android
       jdk: oraclejdk8
@@ -17,18 +16,19 @@ matrix:
         - PLATFORM=android
         - PLATFORM_VERS=5.1
         - PACKAGE_EXT=apk
-        - CACHE_NAME=a22c5
+        - CACHE_NAME=a5c5
     - &macosx
       os: osx
-      osx_image: xcode7.3
       language: objective-c
+      osx_image: xcode8.3
       env:
         - CORDOVA_VERS=5
         - PLATFORM=ios
         - PLATFORM_VERS=10.3
         - PACKAGE_EXT=zip
-        - CACHE_NAME=i9c5
+        - CACHE_NAME=i10c5
     - <<: *linux
+      jdk: oraclejdk8
       android:
         components:
           - tools
@@ -40,15 +40,17 @@ matrix:
         - PLATFORM=android
         - PLATFORM_VERS=5.1
         - PACKAGE_EXT=apk
-        - CACHE_NAME=a25c6
+        - CACHE_NAME=a5c6
     - <<: *macosx
+      osx_image: xcode9.4
       env:
         - CORDOVA_VERS=6
         - PLATFORM=ios
         - PLATFORM_VERS=10.3
         - PACKAGE_EXT=zip
-        - CACHE_NAME=i9c6
+        - CACHE_NAME=i10c6
     - <<: *linux
+      jdk: oraclejdk9
       android:
         components:
           - tools
@@ -60,16 +62,17 @@ matrix:
         - PLATFORM=android
         - PLATFORM_VERS=6.0
         - PACKAGE_EXT=apk
-        - CACHE_NAME=a25c7
+        - CACHE_NAME=a6c7
     - <<: *macosx
-      osx_image: xcode8.3
+      osx_image: xcode10.2
       env:
         - CORDOVA_VERS=7
         - PLATFORM=ios
         - PLATFORM_VERS=11.3
         - PACKAGE_EXT=zip
-        - CACHE_NAME=i10c7
+        - CACHE_NAME=i11c7
     - <<: *linux
+      jdk: oraclejdk9
       android:
         components:
           - tools
@@ -81,15 +84,15 @@ matrix:
         - PLATFORM=android
         - PLATFORM_VERS=8.0
         - PACKAGE_EXT=apk
-        - CACHE_NAME=a27c8
+        - CACHE_NAME=a8c8
     - <<: *macosx
-      osx_image: xcode9.3
+      osx_image: xcode10.2
       env:
         - CORDOVA_VERS=8
         - PLATFORM=ios
         - PLATFORM_VERS=12.2
         - PACKAGE_EXT=zip
-        - CACHE_NAME=i11c8
+        - CACHE_NAME=i12c8
   exclude:
     - env: PLATFORM=none
 

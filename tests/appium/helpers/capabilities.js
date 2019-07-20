@@ -4,7 +4,7 @@
 
 var defaults = {
     browserName: '',
-    appiumVersion: process.env.PLATFORM === 'ios' && Number(process.env.PLATFORM_VERS) < 10 ? '1.7.1' : '1.8.1',
+    appiumVersion: process.env.PLATFORM === 'ios' && Number(process.env.PLATFORM_VERS) < 12 ? '1.9.1' : '1.12.1',
     deviceOrientation: 'portrait',
     platformVersion: process.env.PLATFORM_VERS,
     app: 'sauce-storage:' + process.env.TRAVIS_JOB_ID + '-' + process.env.PLATFORM + '.' + process.env.PACKAGE_EXT,
@@ -14,7 +14,7 @@ var defaults = {
 };
 
 exports.android = Object.assign({
-    deviceName: process.env.PLATFORM === 'android' && Number(process.env.PLATFORM_VERS) > 6 ? 'Android GoogleAPI Emulator' : 'Android Emulator',
+    deviceName: 'Android GoogleAPI Emulator',
     platformName: 'Android'
 }, defaults);
 

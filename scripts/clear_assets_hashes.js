@@ -3,7 +3,7 @@
 var helpers = require('./helpers');
 
 module.exports = function (context) {
-    var fs = context.requireCordovaModule('fs');
+    var fs = require('fs');
 
     process.stdout.write('[ANTI-TAMPERING] Clearing assets hash from previous build\n');
 
@@ -13,9 +13,9 @@ module.exports = function (context) {
 
         if (platform === 'android') {
             content = source.content.replace(/\s*put\("[^"]+",\s"[^"]{64}"\);/g, '')
-            .replace(/assetsHashes\s*=.+\s*new.*(\(\d+\)[^\w]*)\);/, function (match, group) {
-                return match.replace(group, '()\n    ');
-            });
+                .replace(/assetsHashes\s*=.+\s*new.*(\(\d+\)[^\w]*)\);/, function (match, group) {
+                    return match.replace(group, '()\n    ');
+                });
 
             try {
                 fs.writeFileSync(source.path, content, 'utf-8');

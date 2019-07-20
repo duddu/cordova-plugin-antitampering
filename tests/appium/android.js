@@ -46,13 +46,13 @@ describe('AntiTampering Plugin Test - Android', function () {
     it('The Hello World cordova app should load successfully', function () {
         return driver
             .title()
-                .should.eventually.equal('Hello World');
+            .should.eventually.equal('Hello World');
     });
 
     it('The file index.html should have been actually tampered with', function () {
         return driver
             .waitForElementById('tampering')
-                .should.eventually.exist;
+            .should.eventually.exist;
     });
 
     it('The plugin should be able to detect tampering on index.html', function () {
@@ -65,6 +65,6 @@ describe('AntiTampering Plugin Test - Android', function () {
                     callback('error -> ' + JSON.stringify(error));
                 });
             }, [])
-                .should.eventually.contain('index.html has been tampered');
+            .should.eventually.contain('index.html has been tampered');
     });
 });

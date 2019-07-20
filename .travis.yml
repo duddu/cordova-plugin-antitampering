@@ -127,7 +127,7 @@ before_cache:
   - rm -rf $HOME/.gradle/caches/*/plugin-resolution/
 
 before_install:
-  - nvm install node
+  - nvm install 8
 
 install:
   - npm install -g npm@latest

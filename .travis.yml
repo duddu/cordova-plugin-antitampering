@@ -25,7 +25,7 @@ matrix:
       env:
         - CORDOVA_VERS=5
         - PLATFORM=ios
-        - PLATFORM_VERS=9.3
+        - PLATFORM_VERS=10.3
         - PACKAGE_EXT=zip
         - CACHE_NAME=i9c5
     - <<: *linux
@@ -45,7 +45,7 @@ matrix:
       env:
         - CORDOVA_VERS=6
         - PLATFORM=ios
-        - PLATFORM_VERS=9.3
+        - PLATFORM_VERS=10.3
         - PACKAGE_EXT=zip
         - CACHE_NAME=i9c6
     - <<: *linux
@@ -66,7 +66,7 @@ matrix:
       env:
         - CORDOVA_VERS=7
         - PLATFORM=ios
-        - PLATFORM_VERS=10.3
+        - PLATFORM_VERS=11.3
         - PACKAGE_EXT=zip
         - CACHE_NAME=i10c7
     - <<: *linux
@@ -79,7 +79,7 @@ matrix:
       env: 
         - CORDOVA_VERS=8
         - PLATFORM=android
-        - PLATFORM_VERS=7.1
+        - PLATFORM_VERS=8.0
         - PACKAGE_EXT=apk
         - CACHE_NAME=a26c8
     - <<: *macosx
@@ -87,7 +87,7 @@ matrix:
       env:
         - CORDOVA_VERS=8
         - PLATFORM=ios
-        - PLATFORM_VERS=11.3
+        - PLATFORM_VERS=12.2
         - PACKAGE_EXT=zip
         - CACHE_NAME=i11c8
   exclude:

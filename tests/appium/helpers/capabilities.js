@@ -4,7 +4,7 @@
 
 var defaults = {
     browserName: '',
-    appiumVersion: process.env.PLATFORM === 'ios' && Number(process.env.PLATFORM_VERS) < 10 ? '1.7.1' : '1.8.1',
+    appiumVersion: '1.13.0',
     deviceOrientation: 'portrait',
     platformVersion: process.env.PLATFORM_VERS,
     app: 'sauce-storage:' + process.env.TRAVIS_JOB_ID + '-' + process.env.PLATFORM + '.' + process.env.PACKAGE_EXT,

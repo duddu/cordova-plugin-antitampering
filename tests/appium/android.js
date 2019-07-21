@@ -8,7 +8,6 @@ var chaiAsPromised = require('chai-as-promised');
 var logging = require('./helpers/logging');
 var servers = require('./helpers/servers');
 var capabilities = require('./helpers/capabilities');
-var contexts = require('./helpers/contexts');
 
 chai.use(chaiAsPromised);
 chai.should();
@@ -26,10 +25,7 @@ describe('AntiTampering Plugin Test - Android', function () {
 
             return driver
                 .init(capabilities.android.negative)
-                .setImplicitWaitTimeout(5000)
-                .then(function () {
-                    return contexts.getWebView(driver);
-                });
+                .setImplicitWaitTimeout(5000);
         });
 
         after(function () {
@@ -50,7 +46,7 @@ describe('AntiTampering Plugin Test - Android', function () {
                 .should.eventually.equal('Hello World');
         });
 
-        it('The plugin should not detect tampering on index.html', function () {
+        it('The plugin should not detect tampering and return assets count', function () {
             return driver
                 .setAsyncScriptTimeout(20000)
                 .executeAsync(function (callback) {
@@ -60,7 +56,7 @@ describe('AntiTampering Plugin Test - Android', function () {
                         callback('error -> ' + JSON.stringify(error));
                     });
                 }, [])
-                .should.eventually.not.contain('index.html has been tampered');
+                .should.eventually.contain('{"assets":{"count":');
         });
     });
 
@@ -71,10 +67,7 @@ describe('AntiTampering Plugin Test - Android', function () {
 
             return driver
                 .init(capabilities.android.positive)
-                .setImplicitWaitTimeout(5000)
-                .then(function () {
-                    return contexts.getWebView(driver);
-                });
+                .setImplicitWaitTimeout(5000);
         });
 
         after(function () {

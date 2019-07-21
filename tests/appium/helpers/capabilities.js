@@ -18,6 +18,7 @@ var getCapabilityName = function (isNegativeTest) {
 var getDefaults = function (isNegativeTest) {
     return {
         browserName: '',
+        autoWebview: true,
         appiumVersion: process.env.PLATFORM === 'ios' && Number(process.env.PLATFORM_VERS) < 12 ? '1.9.1' : '1.12.1',
         deviceOrientation: 'portrait',
         platformVersion: process.env.PLATFORM_VERS,
@@ -38,7 +39,8 @@ var getAndroid = function (isNegativeTest) {
 var getIos = function (isNegativeTest) {
     return Object.assign({
         deviceName: 'iPhone Simulator',
-        platformName: 'iOS'
+        platformName: 'iOS',
+        webviewConnectRetries: 20
     }, getDefaults(isNegativeTest));
 };
 

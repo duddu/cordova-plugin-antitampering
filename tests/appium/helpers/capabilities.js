@@ -10,8 +10,8 @@ var getAppName = function (isNegativeTest) {
 };
 
 var getCapabilityName = function (isNegativeTest) {
-    return '[AntiTampering' + (isNegativeTest ? ' - negative' : '') + '] ' +
-        'cordova ' + process.env.CORDOVA_VERS + ' - ' +
+    return '[AntiTampering - ' + (isNegativeTest ? 'negative' : 'positive') +
+        '] cordova ' + process.env.CORDOVA_VERS + ' - ' +
         process.env.PLATFORM + ' ' + process.env.PLATFORM_VERS;
 };
 

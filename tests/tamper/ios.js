@@ -5,8 +5,7 @@
 var fs = require('fs');
 var path = require('path');
 
-var buildPath = path.join(process.env.ANTITAMPERING_TEST_DIR, 'platforms/ios/build/emulator');
-var indexAsset = path.join(buildPath, 'HelloWorld.app/www/index.html');
+var indexAsset = path.join(process.env.IOS_BUILD_DIR, 'HelloWorld.app/www/index.html');
 var content;
 
 try {

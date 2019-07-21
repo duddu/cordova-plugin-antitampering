@@ -19,52 +19,99 @@ describe('AntiTampering Plugin Test - Android', function () {
     var driver;
     var allPassed = true;
 
-    before(function () {
-        driver = wd.promiseChainRemote(servers.sauce);
-        logging.configure(driver);
+    describe('Negative', function () {
+        before(function () {
+            driver = wd.promiseChainRemote(servers.sauce);
+            logging.configure(driver);
 
-        return driver
-            .init(capabilities.android)
-            .setImplicitWaitTimeout(5000)
-            .then(function () {
-                return contexts.getWebView(driver);
-            });
-    });
-
-    after(function () {
-        return driver
-            .quit()
-            .finally(function () {
-                return driver.sauceJobStatus(allPassed);
-            });
-    });
-
-    afterEach(function () {
-        allPassed = allPassed && this.currentTest.state === 'passed';
-    });
-
-    it('The Hello World cordova app should load successfully', function () {
-        return driver
-            .title()
-            .should.eventually.equal('Hello World');
-    });
-
-    it('The file index.html should have been actually tampered with', function () {
-        return driver
-            .waitForElementById('tampering')
-            .should.eventually.exist;
-    });
-
-    it('The plugin should be able to detect tampering on index.html', function () {
-        return driver
-            .setAsyncScriptTimeout(20000)
-            .executeAsync(function (callback) {
-                return cordova.plugins.AntiTampering.verify(function (success) {
-                    callback('success -> ' + JSON.stringify(success));
-                }, function (error) {
-                    callback('error -> ' + JSON.stringify(error));
+            return driver
+                .init(capabilities.android.negative)
+                .setImplicitWaitTimeout(5000)
+                .then(function () {
+                    return contexts.getWebView(driver);
                 });
-            }, [])
-            .should.eventually.contain('index.html has been tampered');
+        });
+
+        after(function () {
+            return driver
+                .quit()
+                .finally(function () {
+                    return driver.sauceJobStatus(allPassed);
+                });
+        });
+
+        afterEach(function () {
+            allPassed = allPassed && this.currentTest.state === 'passed';
+        });
+
+        it('The Hello World cordova app should load successfully', function () {
+            return driver
+                .title()
+                .should.eventually.equal('Hello World');
+        });
+
+        it('The plugin should not detect tampering on index.html', function () {
+            return driver
+                .setAsyncScriptTimeout(20000)
+                .executeAsync(function (callback) {
+                    return cordova.plugins.AntiTampering.verify(function (success) {
+                        callback('success -> ' + JSON.stringify(success));
+                    }, function (error) {
+                        callback('error -> ' + JSON.stringify(error));
+                    });
+                }, [])
+                .should.eventually.not.contain('index.html has been tampered');
+        });
+    });
+
+    describe('Positive', function () {
+        before(function () {
+            driver = wd.promiseChainRemote(servers.sauce);
+            logging.configure(driver);
+
+            return driver
+                .init(capabilities.android.positive)
+                .setImplicitWaitTimeout(5000)
+                .then(function () {
+                    return contexts.getWebView(driver);
+                });
+        });
+
+        after(function () {
+            return driver
+                .quit()
+                .finally(function () {
+                    return driver.sauceJobStatus(allPassed);
+                });
+        });
+
+        afterEach(function () {
+            allPassed = allPassed && this.currentTest.state === 'passed';
+        });
+
+        it('The Hello World cordova app should load successfully', function () {
+            return driver
+                .title()
+                .should.eventually.equal('Hello World');
+        });
+
+        it('The file index.html should have been actually tampered with', function () {
+            return driver
+                .waitForElementById('tampering')
+                .should.eventually.exist;
+        });
+
+        it('The plugin should be able to detect tampering on index.html', function () {
+            return driver
+                .setAsyncScriptTimeout(20000)
+                .executeAsync(function (callback) {
+                    return cordova.plugins.AntiTampering.verify(function (success) {
+                        callback('success -> ' + JSON.stringify(success));
+                    }, function (error) {
+                        callback('error -> ' + JSON.stringify(error));
+                    });
+                }, [])
+                .should.eventually.contain('index.html has been tampered');
+        });
     });
 });

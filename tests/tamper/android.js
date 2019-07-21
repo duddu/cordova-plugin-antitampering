@@ -9,16 +9,19 @@ var JSZip = require('jszip');
 var apk;
 var indexAsset = 'assets/www/index.html';
 var platformPath = path.join(process.env.ANTITAMPERING_TEST_DIR, 'platforms/android');
+var pristineApkPath = path.join(process.env.TRAVIS_BUILD_DIR, 'tests/android.apk');
 var tamperedApkPath = path.join(process.env.TRAVIS_BUILD_DIR, 'tests/android-tampered.apk');
 
 new JSZip.external.Promise(function (resolve, reject) {
-    fs.readFile(path.join(platformPath, 'app/build/outputs/apk/debug/app-debug.apk'), function (_err, _data) {
+    var buildPath = path.join(platformPath, 'app/build/outputs/apk/debug/app-debug.apk');
+    fs.readFile(buildPath, function (_err, _data) {
         if (!_err) {
-            resolve(_data);
+            resolve(buildPath, _data);
         } else {
-            fs.readFile(path.join(platformPath, 'build/outputs/apk/android-debug.apk'), function (err, data) {
+            buildPath = path.join(platformPath, 'build/outputs/apk/android-debug.apk');
+            fs.readFile(buildPath, function (err, data) {
                 if (!err) {
-                    resolve(data);
+                    resolve(buildPath, data);
                 } else {
                     reject(err);
                 }
@@ -26,7 +29,8 @@ new JSZip.external.Promise(function (resolve, reject) {
         }
     });
 })
-    .then(function (data) {
+    .then(function (buildPath, data) {
+        fs.copyFileSync(buildPath, pristineApkPath);
         return JSZip.loadAsync(data);
     })
     .then(function (zip) {

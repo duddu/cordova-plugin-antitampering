@@ -16,12 +16,12 @@ new JSZip.external.Promise(function (resolve, reject) {
     var buildPath = path.join(platformPath, 'app/build/outputs/apk/debug/app-debug.apk');
     fs.readFile(buildPath, function (_err, _data) {
         if (!_err) {
-            resolve(buildPath, _data);
+            resolve({path: buildPath, data: _data});
         } else {
             buildPath = path.join(platformPath, 'build/outputs/apk/android-debug.apk');
             fs.readFile(buildPath, function (err, data) {
                 if (!err) {
-                    resolve(buildPath, data);
+                    resolve({path: buildPath, data: data});
                 } else {
                     reject(err);
                 }
@@ -29,9 +29,9 @@ new JSZip.external.Promise(function (resolve, reject) {
         }
     });
 })
-    .then(function (buildPath, data) {
-        fs.copyFileSync(buildPath, pristineApkPath);
-        return JSZip.loadAsync(data);
+    .then(function (result) {
+        fs.copyFileSync(result.path, pristineApkPath);
+        return JSZip.loadAsync(result.data);
     })
     .then(function (zip) {
         apk = zip;

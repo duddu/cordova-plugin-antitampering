@@ -1,5 +1,10 @@
 # Changelog
 
+## v0.4.1
+
+- CI: add negative tests
+- CI: refactor mocha tests structure and appium capabilities
+
 ## v0.4.0
 
 - Fix plugin support for Cordova 9

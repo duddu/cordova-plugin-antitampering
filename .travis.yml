@@ -127,6 +127,10 @@ matrix:
 env:
   global:
     - ANTITAMPERING_TEST_DIR=$HOME/tests/hello
+    - IOS_BUILD_DIR=$ANTITAMPERING_TEST_DIR/platforms/ios/build/emulator
+    - SAUCE_CREDENTIALS=$SAUCE_USERNAME:$SAUCE_ACCESS_KEY
+    - SAUCE_HEADERS=Content-Type:application/octet-stream
+    - SAUCE_BASE_URL=https://saucelabs.com/rest/v1/storage/duddu/$TRAVIS_JOB_ID
   matrix:
     - PLATFORM=none
 
@@ -179,7 +183,10 @@ script:
   - cordova compile --debug $PLATFORM -verbose
   - cd $TRAVIS_BUILD_DIR
   - npm run tamper-$PLATFORM
-  - curl -u $SAUCE_USERNAME:$SAUCE_ACCESS_KEY -X POST -H "Content-Type:application/octet-stream"
-      https://saucelabs.com/rest/v1/storage/duddu/$TRAVIS_JOB_ID-$PLATFORM.$PACKAGE_EXT?overwrite=true
+  - curl -u $SAUCE_CREDENTIALS -X POST -H $SAUCE_HEADERS
+      $SAUCE_BASE_URL-$PLATFORM.$PACKAGE_EXT?overwrite=true
+      --data-binary @$TRAVIS_BUILD_DIR/tests/$PLATFORM.$PACKAGE_EXT
+  - curl -u $SAUCE_CREDENTIALS -X POST -H $SAUCE_HEADERS
+      $SAUCE_BASE_URL-$PLATFORM-tamper.$PACKAGE_EXT?overwrite=true
       --data-binary @$TRAVIS_BUILD_DIR/tests/$PLATFORM-tampered.$PACKAGE_EXT
   - npm run appium-$PLATFORM

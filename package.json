@@ -1,6 +1,6 @@
 {
   "name": "cordova-plugin-antitampering",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "description": "Verify the integrity of cordova static assets - Android / iOS",
   "author": "duddu",
   "repository": {
@@ -35,8 +35,10 @@
   },
   "scripts": {
     "lint": "eslint \"+(scripts|tests|www)/**/*.js\"",
-    "tamper-android": "node tests/tamper/android.js && jarsigner -verbose -keystore $HOME/.android/debug.keystore -storepass android -keypass android $TRAVIS_BUILD_DIR/tests/android-tampered.apk androiddebugkey",
-    "tamper-ios": "node tests/tamper/ios.js && cd $ANTITAMPERING_TEST_DIR/platforms/ios/build/emulator && zip -r $TRAVIS_BUILD_DIR/tests/ios-tampered.zip HelloWorld.app && cd $TRAVIS_BUILD_DIR",
+    "sign-tampered-apk": "jarsigner -verbose -keystore $HOME/.android/debug.keystore -storepass android -keypass android $TRAVIS_BUILD_DIR/tests/android-tampered.apk androiddebugkey",
+    "tamper-android": "node tests/tamper/android.js && npm run sign-tampered-apk",
+    "zip-ios-pristine-app": "cd $IOS_BUILD_DIR && zip -r $TRAVIS_BUILD_DIR/tests/ios.zip HelloWorld.app",
+    "tamper-ios": "npm run zip-ios-pristine-app && node tests/tamper/ios.js && cd $IOS_BUILD_DIR && zip -r $TRAVIS_BUILD_DIR/tests/ios-tampered.zip HelloWorld.app",
     "appium-android": "mocha tests/appium/android.js",
     "appium-ios": "mocha tests/appium/ios.js"
   }

@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.4.2
+
+- Updated npm dev dependencies
+
 ## v0.4.1
 
 - CI: add negative tests

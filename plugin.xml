@@ -23,8 +23,9 @@
 
     <hook type="after_plugin_install" src="scripts/handle_plugin_preferences.js" />
     <hook type="after_prepare" src="scripts/handle_plugin_preferences.js" />
-    <hook type="after_prepare" src="scripts/clear_assets_hashes.js" />
+    <hook type="after_prepare" src="scripts/save_assets_hashes.js" />
     <hook type="before_compile" src="scripts/save_assets_hashes.js" />
+    <hook type="before_clean" src="scripts/clear_assets_hashes.js" />
 
     <platform name="android">
 
